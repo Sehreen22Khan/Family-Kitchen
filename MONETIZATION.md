@@ -7,7 +7,8 @@ The meal plan stays **free for everyone**. That keeps people sharing the app on 
 |---|---|
 | ⏱ One-tap timers: tap any "10 min" in a step | Useful at the stove every night |
 | 👩‍🍳 Cook mode: one big step at a time, screen stays on | Hands-free cooking |
-| 🛒 Grocery list: tick items off, share on WhatsApp | Used every week, so people keep paying |
+| 🛒 Grocery list: tick items off, share on WhatsApp | **Free for now.** Set `GROCERIES_FREE: false` to make it Plus again |
+| 🏷️ Print box labels for the week (part of printing) | Saves writing 20+ labels every Saturday |
 | ❤️ Favourites and 📝 notes | Their own data, so they don't want to leave |
 | 🎨 Five extra colour themes | Fun and personal |
 | 🖨 Print the week | For the fridge |

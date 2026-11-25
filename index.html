@@ -118,7 +118,7 @@ input::placeholder,textarea::placeholder{color:var(--muted);opacity:.75}
 .modal .x{float:right;border:0;background:var(--card2);color:var(--text);width:36px;height:36px;border-radius:50%;font-size:16px;margin:-4px -4px 0 8px;cursor:pointer}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-10px);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:999px;font-size:14.5px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:80;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-10px);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:20px;font-size:14.5px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:80;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ===== Bottom tab bar ===== */
@@ -395,12 +395,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 details.more{margin-top:6px}
 details.more>summary{list-style:none;display:block;text-align:center;margin-bottom:8px}
 details.more>summary::-webkit-details-marker{display:none}
-s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--muted)}
 .steps>:first-child{border-top:0}
-.skipln{display:flex;gap:12px;align-items:flex-start;padding:11px 2px;border-top:1px solid var(--line)}
-.skipln .bx,.skipln .tx{opacity:.45}
-.skipln .tx{flex:1;min-width:0;line-height:1.55;text-decoration:line-through;text-decoration-color:var(--muted)}
-.sk{flex:none;font-size:10.5px;font-weight:900;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:3px 8px;background:var(--card2);color:var(--muted);border:1px solid var(--line);margin-top:2px}
 
 /* ===== Questions ===== */
 #quiz{position:fixed;inset:0;z-index:75;background:var(--bg);display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 12px) 18px calc(env(safe-area-inset-bottom) + 16px);overflow-y:auto;overflow-x:hidden}
@@ -441,6 +436,31 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
 .qpot{font-size:84px;line-height:1.1;animation:stir 0.9s ease-in-out infinite}
 @keyframes stir{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.08)}}
 
+/* ===== Rules, symbols, boxes ===== */
+.sub{margin-top:6px;padding:8px 11px;border-radius:12px;background:var(--card2);border:1px solid var(--line);font-size:14px;line-height:1.5;font-weight:600}
+.tk.done .sub{text-decoration:none}
+.sym{cursor:help}
+.rules{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px;text-align:left}
+.rules li{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow)}
+.rules .re{font-size:23px;line-height:1.25;flex:none;width:30px;text-align:center}
+.rules b{display:block;font-size:15px;font-weight:900}
+.rules small{display:block;color:var(--muted);font-size:13.5px;font-weight:700;line-height:1.4;margin-top:1px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0 10px}
+.lg{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 9px;font-size:13.5px;font-weight:700;line-height:1.25}
+.lg .li{font-size:20px;flex:none;width:26px;text-align:center}
+.lg .lt{min-width:0}
+.lg small{display:block;color:#C2410C;font-size:11.5px;font-weight:800}
+.lg.no .li{opacity:.45;filter:grayscale(1)}
+.kitn div,.words div{margin-top:6px;font-size:14px;line-height:1.45}
+.boxsum{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;font-size:14.5px;margin:6px 0 4px}
+.box{display:inline-block;margin:3px 5px 3px 0;padding:3px 9px;border-radius:9px;background:var(--brand-soft);color:var(--brand-text);font:inherit;font-weight:800;font-size:13.5px;border:0;line-height:1.5}
+button.box{cursor:pointer}
+.bxg{padding:10px 0 6px;border-top:1px solid var(--line)}
+.bxg:first-of-type{border-top:0}
+.bxd{font-size:13px;color:var(--muted);margin-bottom:3px;font-weight:700}
+.bxd b{color:var(--text)}
+.qhero .big.sm{font-size:56px}
+
 /* ===== Confetti ===== */
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
 #confetti i{position:absolute;top:-40px;font-style:normal;font-size:24px;animation:fall linear forwards}
@@ -460,6 +480,12 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   #print th{color:#000}
   #print .chip{background:none;color:#000;border:1px solid #999;padding:0 4px}
   #print .day{page-break-inside:avoid}
+  #print .labels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+  #print .lab{border:1px dashed #888;border-radius:6px;padding:10px 8px;min-height:58px;display:flex;flex-direction:column;justify-content:center;page-break-inside:avoid}
+  #print .lab b{font-size:15px}
+  #print .lab span{font-size:11px;color:#444}
+  #print .box{background:none;color:#000;padding:0;margin:0 6px 0 0}
+  #print .sub{border:0;background:none;padding:0 0 0 12px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -509,6 +535,12 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     <h3 style="margin-top:0">⚙️ Week settings</h3>
     <p class="small">Wrong week showing, or Ramadan dates changed? Fix it here.</p>
     <button class="btn secondary wide" id="openSettings">Open week settings</button>
+  </div>
+
+  <div class="panel">
+    <h3 style="margin-top:0">📦 Boxes and labels</h3>
+    <p class="small">Every box and pudi you fill on Saturday, its name, and where it goes.</p>
+    <button class="btn secondary wide" id="openBoxes">See this week's boxes</button>
   </div>
 
   <div class="panel" id="channelCard" hidden>
@@ -572,6 +604,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   var PLUS = {
     STORE_ID: '',          // your Lemon Squeezy store ID (numbers only), so keys from other stores don't work
     TRIAL_DAYS: 7,         // free trial length; 0 turns the trial off
+    GROCERIES_FREE: true,  // the grocery list is free for now; set to false to make it a Plus feature again
     PICK_MEALS: false,     // true: changing meals in My menu needs Plus (the questions and suggested menu stay free)
     PLANS: [
       { id: 'yearly',   name: 'Yearly',   sub: 'Best value · 2 months free', price: '$19.99', per: '/year',  link: '', save: 'SAVE 44%' },
@@ -699,6 +732,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     themes: ['🎨', 'Colour themes', 'Make the app yours with five extra colour themes.'],
     print: ['🖨️', 'Print the week', 'A clean, fridge-ready page of the whole week’s plan.']
   };
+  if (PLUS.GROCERIES_FREE) delete FEATURES.grocery;
   if (PLUS.PICK_MEALS) FEATURES.menu = ['🍽️', 'Pick every meal', 'Swap any night for a dish your family loves.'];
   function need(feature, fn) { if (isPlus()) fn(); else openPaywall(feature); }
 
@@ -791,9 +825,9 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
       h = '<h3 style="margin-top:0">👑 Kitchen Plus is on</h3><p class="small">Thank you for supporting Family Kitchen' + (state.plus.plan ? ' (' + esc(state.plus.plan) + ')' : '') + '. Every Plus feature is unlocked on this phone.</p>' +
         '<button class="btn secondary wide" id="plusOff">Remove the key from this phone</button>';
     } else if (tl) {
-      h = '<h3 style="margin-top:0">👑 Plus trial: ' + tl + ' day' + (tl === 1 ? '' : 's') + ' left</h3><p class="small">Enjoying timers, cook mode and the grocery list? Keep them after your trial.</p><button class="btn wide" id="plusGo">See Plus plans</button>';
+      h = '<h3 style="margin-top:0">👑 Plus trial: ' + tl + ' day' + (tl === 1 ? '' : 's') + ' left</h3><p class="small">Enjoying timers and cook mode? Keep them after your trial.</p><button class="btn wide" id="plusGo">See Plus plans</button>';
     } else {
-      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Timers, cook mode, a grocery list, favourites, colour themes and printing.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
+      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Timers, cook mode, favourites, colour themes, and printing the week and your box labels.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
     }
     c.innerHTML = h;
     if ($('plusGo')) $('plusGo').addEventListener('click', function () { openPaywall(); });
@@ -849,25 +883,25 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     });
   }
   // ctx: null for plain reading, or { day, seen, done } to make steps tickable.
-  // skip: { n, off } crosses out Saturday prep for nights swapped in My menu.
-  function blocksHTML(blocks, ctx, skip) {
+  // skip: { n, off } leaves out Saturday prep for nights swapped in My menu.
+  // disp: changes how a line looks; its tick still matches the original text.
+  function blocksHTML(blocks, ctx, skip, disp) {
     var h = '';
     blocks.forEach(function (b) {
       if (b.t === 'h') h += '<h4>' + b.h + '</h4>';
       else if (b.t === 'h3') h += '<h3>' + b.h + '</h3>';
-      else if (b.t === 'p') h += '<p>' + (ctx ? timerize(b.h) : b.h) + '</p>';
-      else if (b.t === 'tonight') h += ctx ? tickHTML(b.h, '', ctx, 'div', ' tonight') : '<p class="tonight">' + b.h + '</p>';
+      else if (b.t === 'p') h += '<p>' + (ctx ? symbolize(timerize(b.h)) : b.h) + '</p>';
+      else if (b.t === 'tonight') h += ctx ? tickHTML(b.h, '', ctx, 'div', ' tonight', withBreakfast(b.h)) : '<p class="tonight">' + withBreakfast(b.h) + '</p>';
       else if (b.t === 'table') h += tableHTML(b.rows);
       else if (b.t === 'ol' || b.t === 'ul') {
-        h += '<' + b.t + ' class="' + (ctx ? 'steps' : 'plain') + '">' + b.items.map(function (it, i) {
-          var sk = skip ? skipInfo(skip, it) : null;
-          if (sk && sk.skip) {
-            if (ctx) ctx.seen[tickId(it, ctx)] = 2; // keeps later ids the same; not counted
-            return '<li class="skipln"><span class="bx">–</span><div class="tx">' + it + '</div><span class="sk">Swapped</span></li>';
-          }
-          var shown = sk ? sk.html : it;
+        var items = b.items.map(function (it, i) {
+          var tr = skip ? trimPrep(skip, it) : null;
+          if (tr && tr.hide) { if (ctx) ctx.seen[tickId(it, ctx)] = 2; return ''; } // keeps later ids the same; not counted
+          var shown = tr ? tr.html : it;
+          shown = withBreakfast(disp ? disp(shown) : shown);
           return ctx ? tickHTML(it, b.t === 'ol' ? i + 1 : '', ctx, 'li', '', shown) : '<li>' + shown + '</li>';
-        }).join('') + '</' + b.t + '>';
+        }).join('');
+        if (items) h += '<' + b.t + ' class="' + (ctx ? 'steps' : 'plain') + '">' + items + '</' + b.t + '>';
       }
     });
     return h;
@@ -882,10 +916,178 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   function tickHTML(html, num, ctx, tag, extra, shown) {
     var id = tickId(html, ctx), on = !!ctx.done[id];
     return '<' + tag + ' class="tk' + extra + (on ? ' done' : '') + '" data-id="' + id + '" role="checkbox" aria-checked="' + on + '" tabindex="0">' +
-      '<span class="bx">' + num + '</span><div class="tx">' + timerize(shown || html) + '</div></' + tag + '>';
+      '<span class="bx">' + num + '</span><div class="tx">' + symbolize(timerize(shown || html)) + '</div></' + tag + '>';
+  }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function norm(s) { return String(s).replace(/️/g, ''); }
+
+  // ----- Breakfast prep, spelled out where it's needed instead of pointing to the Breakfast tab -----
+  function bfText(name) {
+    var r = PLAN.bf.recipes.filter(function (x) { return x.name === name; })[0];
+    return r ? r.h.replace(/^✨\s*/, '') : '';
+  }
+  function withBreakfast(html) {
+    var t = bfText('Egg muffins');
+    if (/\(recipe in the ☀️? Breakfast tab\)/.test(html) && /egg muffins/i.test(strip(html)) && t) return html.replace(/\s*\(recipe in the ☀️? Breakfast tab\)/, '') + '<div class="sub">' + t + '</div>';
+    if (/^🌙/.test(strip(html)) && /overnight oats/.test(html) && (t = bfText('Overnight oats'))) return html + '<div class="sub">' + t + '</div>';
+    return html;
   }
 
-  // ----- My menu: crossing out Saturday prep for nights that were swapped -----
+  // ----- Symbols: tap one in a step to see what it means -----
+  function legendRows() {
+    var t = PLAN.start.filter(function (b) { return b.t === 'table'; })[0], out = [];
+    (t ? t.rows.slice(1) : []).forEach(function (r) { for (var i = 0; i + 1 < r.length; i += 2) if (r[i]) out.push([r[i], r[i + 1]]); });
+    return out;
+  }
+  var SYM = {}, SYM_RE = null;
+  function symbolize(html) {
+    if (!SYM_RE) {
+      var keys = legendRows().map(function (r) { SYM[norm(r[0])] = r[1]; return norm(r[0]); });
+      SYM_RE = new RegExp('(' + (keys.length ? keys.map(function (k) { return k + '\\uFE0F?'; }).join('|') : '$^') + ')', 'g');
+    }
+    return html.replace(SYM_RE, function (m) { return '<span class="sym" data-sym="' + norm(m) + '">' + m + '</span>'; });
+  }
+  // The appliances the plan uses, and what to do without each one
+  var KIT = [
+    ['ip', '🍲', 'Instant Pot', 'Or another electric pressure cooker', 'No Instant Pot? Use a pressure cooker: bring it up to pressure on high, then cook on low for about the same time. “Sauté” just means fry in the open pot.'],
+    ['af', '💨', 'Air fryer', '', 'No air fryer? Use the oven at the same temperature on a lined tray, 5–10 minutes longer, turning once.'],
+    ['ninja', '🌀', 'Ninja chopper', 'Chop, Puree, Dough and Disc', 'No Ninja? Chop or grate by hand, blend purées and pastes in a blender, and knead dough by hand.'],
+    ['pull', '✂️', 'Pull-string chopper', '', 'No pull-string chopper? Chop finely with a knife.'],
+    ['dicer', '🎲', 'Cube dicer', '', 'No cube dicer? Dice with a knife.'],
+    ['rc', '🍚', 'Rice cooker', '', 'No rice cooker? Boil soaked rice in plenty of salted water until just tender, 8–10 minutes, then drain.'],
+    ['dw', '🍽️', 'Dishwasher', '', 'No dishwasher? Wash up halfway through, so the bowls are free for the second half.']
+  ];
+  function missingKit(kit) { kit = kit === undefined ? state.prefs.kit : kit; return kit ? KIT.filter(function (x) { return kit[x[0]] === false; }) : []; }
+  function kitList(list) { return list.map(function (x) { return '<div>' + x[1] + ' ' + esc(x[4]) + '</div>'; }).join(''); }
+  // "For your kitchen" tips for the appliances a day uses that the family doesn't have
+  function kitNote(html) {
+    var miss = missingKit().filter(function (x) { return html.indexOf(norm(x[1])) >= 0; });
+    if (!miss.length) return '';
+    return miss.length > 2 ? '<details class="bf kitd"><summary><span>🧰 <b>Tips for your kitchen</b> (' + miss.length + ')</span><span class="more">Show ▾</span></summary><div class="rb kitn">' + kitList(miss) + '</div></details>'
+      : '<div class="note kitn">🧰 <b>For your kitchen</b>' + kitList(miss) + '</div>';
+  }
+  // The boxes to take out for tonight's dinner
+  function takeOut(n, d, S) {
+    if (d === 'sat' || nightPick(n, d, S).q) return '';
+    var list = boxesOf(n).filter(function (b) { return b.who === DAY_LONG[d]; });
+    return list.length ? '<div class="note">📦 <b>Boxes for ' + (d === 'sun' ? 'today' : 'tonight') + ':</b> ' + list.map(function (b) { return '<span class="box">' + esc(b.name) + ' ' + b.icon + '</span>'; }).join('') + '</div>' : '';
+  }
+  function symInfo(s) {
+    var k = KIT.filter(function (x) { return norm(x[1]) === s; })[0], miss = k && missingKit().indexOf(k) >= 0;
+    toast(s + ' ' + (SYM[s] || '') + (miss ? '. ' + k[4] : ''), miss ? 6000 : 0);
+  }
+  function legendHTML(kit) {
+    var miss = missingKit(kit || null), no = {};
+    miss.forEach(function (x) { no[norm(x[1])] = 1; });
+    return '<div class="legend">' + legendRows().map(function (r) {
+      var off = no[norm(r[0])];
+      return '<div class="lg' + (off ? ' no' : '') + '"><span class="li">' + r[0] + '</span><span class="lt">' + esc(r[1]) + (off ? '<small>Not in your kitchen</small>' : '') + '</span></div>';
+    }).join('') + '</div>' +
+      (miss.length ? '<div class="note kitn">🧰 <b>Missing something? No problem:</b>' + kitList(miss) + '</div>' : '') +
+      '<div class="note words"><b>Words you\'ll see</b><div><b>GGP</b>: ginger-garlic paste.</div>' +
+      '<div><b>Pudi</b>: a small folded paper packet of measured spices, with its name written on it.</div>' +
+      '<div><span class="chip">Monday onions</span>: a box you filled and labelled on Saturday.</div>' +
+      '<div><span class="tm">10 min</span>: tap to start a timer.</div></div>';
+  }
+
+  // ----- The rules, for anyone new -----
+  var RULES = [
+    ['🛒', 'Saturday is prep day', 'About 3 hours: chop, cook, fold spice pudis and marinate for the whole week, one station at a time.'],
+    ['🏷️', 'Every box gets a label', 'Its day and name, like “Monday onions”. The steps use the same names.'],
+    ['⏱️', 'Weeknights take 20 to 30 minutes', 'Open that night\'s boxes and follow the steps.'],
+    ['🌙', 'Every night, move tomorrow\'s boxes', 'From the ❄️ freezer to the 🧊 fridge. The last step of each night reminds you.'],
+    ['🥡', 'Sunday is a night off', 'Takeaway or something easy. Lunch is last night\'s dinner.'],
+    ['✅', 'Tick steps as you go', 'Finish a day to grow your 🔥 streak. The 8 weeks repeat, and Ramadan pauses them.']
+  ];
+  function rulesHTML() {
+    return '<ul class="rules">' + RULES.map(function (r) { return '<li><span class="re">' + r[0] + '</span><span><b>' + r[1] + '</b><small>' + r[2] + '</small></span></li>'; }).join('') + '</ul>';
+  }
+
+  // ----- Boxes: every box and pudi filled on Saturday, from the 🏷️ Label and store station -----
+  var WHO = { Monday: 'mon', Tuesday: 'tue', Wednesday: 'wed', Thursday: 'thu', Friday: 'fri' };
+  var WHERE = { '🧊': 'Fridge', '❄': 'Freezer', '🗄': 'Cupboard tray' }, ICON = { '🧊': '🧊', '❄': '❄️', '🗄': '🗄️' };
+  var LABEL_RE = /^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Breakfast):\s*([^.]*)(.*)$/;
+  var BOX_RE = /^(.*?)\s*(🧊|❄️?|🗄️?)\s*(\(.*\))?\s*$/;
+  var BOXES = {};
+  function boxesOf(n) {
+    if (BOXES[n]) return BOXES[n];
+    var out = [];
+    PLAN.weeks[n - 1].days.sat.groups.forEach(function (g) {
+      if (!/Label/.test(g.title)) return;
+      g.blocks.forEach(function (b) {
+        (b.items || []).forEach(function (it) {
+          var m = LABEL_RE.exec(strip(it));
+          if (m) m[2].split(' · ').forEach(function (p) {
+            var x = BOX_RE.exec(p.trim());
+            if (x) out.push({ who: m[1], name: m[1] === 'Breakfast' ? cap(x[1]) : m[1] + ' ' + x[1], where: norm(x[2]), icon: ICON[norm(x[2])], note: x[3] || '' });
+          });
+        });
+      });
+    });
+    return (BOXES[n] = out);
+  }
+  // This week's boxes: the ones for swapped nights aren't needed
+  function boxList(n, S) {
+    var off = swappedNights(menuFor(n, S)) || {};
+    return boxesOf(n).filter(function (b) { return !(WHO[b.who] && off[WHO[b.who]]); });
+  }
+  // "Monday: marinade 🧊 · onions 🧊" shows each box's full name
+  function labelLine(html) {
+    var m = LABEL_RE.exec(strip(html)), rest;
+    if (!m) return html;
+    rest = m[3].replace(/^\.\s*/, '');
+    return '<b>' + m[1] + ':</b> ' + m[2].split(' · ').map(function (p) {
+      var x = BOX_RE.exec(p.trim());
+      return x ? '<span class="box">' + esc(m[1] === 'Breakfast' ? cap(x[1]) : m[1] + ' ' + x[1]) + ' ' + ICON[norm(x[2])] + '</span>' + (x[3] ? '<span class="small">' + esc(x[3]) + '</span> ' : '') : esc(p);
+    }).join(' ') + (rest ? ' ' + esc(rest) : '');
+  }
+  function boxesHTML(n, S, live) {
+    var list = boxList(n, S), W = PLAN.weeks[n - 1], c = { '🧊': 0, '❄': 0, '🗄': 0 }, groups = [], by = {};
+    list.forEach(function (b, i) {
+      c[b.where] = (c[b.where] || 0) + 1;
+      if (!by[b.who]) { by[b.who] = []; groups.push(b.who); }
+      var tag = live ? 'button' : 'span';
+      by[b.who].push('<' + tag + ' class="box" data-box="' + i + '">' + esc(b.name) + ' ' + b.icon + '</' + tag + '>');
+    });
+    return '<p class="small"><b>' + list.length + ' to fill and label:</b> 🧊 ' + c['🧊'] + ' fridge · ❄️ ' + c['❄'] + ' freezer · 🗄️ ' + c['🗄'] + ' cupboard tray (pudis and dry goods)</p>' +
+      groups.map(function (who) {
+        var k = WHO[who], sub = k ? strip(W.glance[k].dinner) : who === 'Sunday' ? 'breakfast and treat' : 'the week\'s breakfasts';
+        return '<div class="bxg"><div class="bxd"><b>' + who + '</b> · ' + esc(sub) + '</div>' + by[who].join('') + '</div>';
+      }).join('');
+  }
+  function openBoxes(n, S) {
+    if (!n) { toast('The weeks are paused, so there are no boxes to fill this week'); return; }
+    openModal('<h3>📦 Week ' + n + ' boxes</h3><p class="small">Fill these on Saturday and write each name on its box or pudi. Tap one to see what goes in it.</p>' + boxesHTML(n, S, true) +
+      '<button class="btn secondary wide" id="bxPrint" style="margin-top:12px">🖨️ Print labels' + (isPlus() ? '' : ' 👑') + '</button>');
+    each($('modal').querySelectorAll('[data-box]'), function (b) {
+      b.addEventListener('click', function () { boxDetail(n, S, boxList(n, S)[+b.getAttribute('data-box')]); });
+    });
+    $('bxPrint').addEventListener('click', function () { need('print', function () { closeModal(); printLabels(n, S); }); });
+  }
+  function boxDetail(n, S, b) {
+    var nm = b.name.toLowerCase(), longer = boxesOf(n).map(function (x) { return x.name.toLowerCase(); })
+      .filter(function (x) { return x !== nm && x.indexOf(nm + ' ') === 0; }).map(function (x) { return reEsc(x.slice(nm.length + 1)); });
+    var re = new RegExp('\\b' + reEsc(nm) + '\\b' + (longer.length ? '(?!\\s+(?:' + longer.join('|') + ')\\b)' : ''), 'i'), lines = [];
+    PLAN.weeks[n - 1].days.sat.groups.forEach(function (g) {
+      if (/Label|Tonight/.test(g.title)) return;
+      g.blocks.forEach(function (bl) { (bl.items || []).forEach(function (it) { if (re.test(strip(it))) lines.push('<li>' + withBreakfast(it) + '</li>'); }); });
+    });
+    var k = WHO[b.who], used = k ? 'Used on ' + DAY_LONG[k] + ': ' + strip(PLAN.weeks[n - 1].glance[k].dinner) : b.who === 'Sunday' ? 'Used on Sunday, for breakfast or the treat' : 'Used for the week\'s breakfasts';
+    openModal('<h3>📦 ' + esc(b.name) + '</h3><p class="small">' + b.icon + ' ' + WHERE[b.where] + (b.note ? ' ' + esc(b.note) : '') + '<br>' + esc(used) + '</p>' +
+      (b.name === 'Breakfast mix' ? '<div class="note">' + bfText('Breakfast mix') + '</div>' : '') +
+      (lines.length ? '<h4>Filled on Saturday</h4><ul class="plain">' + lines.join('') + '</ul>' : '') +
+      '<button class="linkbtn" id="bxBack">‹ All boxes</button>');
+    $('bxBack').addEventListener('click', function () { openBoxes(n, S); });
+  }
+  function printLabels(n, S) {
+    $('print').innerHTML = '<h1>Family Kitchen · Week ' + n + ' labels</h1><div class="labels">' + boxList(n, S).map(function (b) {
+      return '<div class="lab"><b>' + esc(b.name) + '</b><span>' + b.icon + ' ' + WHERE[b.where] + '</span></div>';
+    }).join('') + '</div>';
+    setTimeout(function () { window.print(); }, 50);
+  }
+
+  // ----- My menu: leaving out Saturday prep for nights that were swapped -----
   var PREP_NIGHTS = ['sat', 'mon', 'tue', 'wed', 'thu', 'fri'];
   var NIGHT_WORD = { sat: "[Tt]onight(?:'s)?", mon: "Monday(?!'s breakfast)", tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday' };
   // Containers some weeks name without their day
@@ -899,40 +1101,70 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     list.forEach(function (d) { w.push(NIGHT_WORD[d]); ((ALIAS[n] || {})[d] || []).forEach(function (a) { w.push(a); }); });
     return (RE_CACHE[k] = w.length ? new RegExp('\\b(?:' + w.join('|') + ')\\b') : /$^/);
   }
-  // null: keep as is · { skip: true }: only for swapped nights · { html }: some parts crossed out
-  function skipInfo(skip, html) {
+  // null: keep as is · { hide: true }: only for swapped nights · { html }: the swapped parts taken out
+  function trimPrep(skip, html) {
     var t = strip(html), hit = 0, keep = OTHER_USE.test(t);
     PREP_NIGHTS.forEach(function (d) { if (nightRe(skip.n, [d]).test(t)) { if (skip.off[d]) hit++; else keep = true; } });
     if (!hit) return null;
-    if (!keep) return { skip: true };
-    var out = strikeOff(skip, html);
-    if (!strip(out.replace(/<s class="off">[\s\S]*?<\/s>/g, '')).replace(/[\s.,;:·→()]/g, '')) return { skip: true };
+    if (!keep) return { hide: true };
+    var out = dropOff(skip, html);
+    if (!strip(out).replace(/[\s.,;:·→()]/g, '')) return { hide: true };
     return out === html ? null : { html: out };
   }
-  function strikeOff(skip, html) {
+  var FRAC = { '½': 0.5, '¼': 0.25, '¾': 0.75, '⅓': 1 / 3, '⅔': 2 / 3 };
+  function qty(t) { var m = /^(\d+)?([½¼¾⅓⅔])?$/.exec(t || ''); return m && (m[1] || m[2]) ? +(m[1] || 0) + (m[2] ? FRAC[m[2]] : 0) : null; }
+  function qtyText(x) {
+    var w = Math.floor(x + 1e-6), f = x - w, fr = '';
+    if (f > 0.01) { for (var k in FRAC) if (Math.abs(FRAC[k] - f) < 0.01) fr = k; if (!fr) return null; }
+    return (w || !fr ? String(w) : '') + fr;
+  }
+  // The amount at the end of a part: "Monday onions 2", "tonight ½", "Sunday onion 1 small"
+  function tailQty(seg) {
+    var m = /\s(\d+[½¼¾⅓⅔]?|[½¼¾⅓⅔])(?:\s+(?:small|big|large))?(?:\s*\([^)]*\))?\s*$/.exec(' ' + strip(seg));
+    return m ? qty(m[1]) : null;
+  }
+  function one(w) { // 1 onion, not 1 onions
+    if (w === 'chillies') return 'chilli';
+    if (/(ch|sh|ss|o)es$/.test(w)) return w.slice(0, -2);
+    if (/ies$/.test(w)) return w.slice(0, -3) + 'y';
+    if (/[^su]s$/.test(w)) return w.slice(0, -1);
+    return w;
+  }
+  function dropOff(skip, html) {
     var reOff = nightRe(skip.n, PREP_NIGHTS.filter(function (d) { return skip.off[d]; }));
     var reOn = nightRe(skip.n, PREP_NIGHTS.filter(function (d) { return !skip.off[d]; }));
     function bad(x) { x = strip(x); return reOff.test(x) && !reOn.test(x) && !OTHER_USE.test(x); }
-    function s(x) { return '<s class="off">' + x + '</s>'; }
-    return html.split(/(\.\s+)/).map(function (sen, i) {
-      if (i % 2) return sen;
+    function sum(l) { return l.reduce(function (s, x) { return s + x; }, 0); }
+    function clause(cl) {
+      var a = cl.lastIndexOf('→'), c = cl.indexOf(': '), pre, rest;
+      if (a >= 0) { pre = cl.slice(0, a + 1); rest = cl.slice(a + 1); }
+      else if (cl.indexOf(' · ') >= 0) { pre = c >= 0 ? cl.slice(0, c + 2) : ''; rest = c >= 0 ? cl.slice(c + 2) : cl; }
+      else return cl;
+      var segs = rest.split(' · '), kept = segs.filter(function (p) { return !bad(p); });
+      if (!kept.length) return '';
+      if (kept.length === segs.length) return cl;
+      // When the parts add up to the amount, the amount changes too: "Chop 8 onions" becomes "Chop 6 onions"
+      var m = /(\d+[½¼¾⅓⅔]?|[½¼¾⅓⅔])(?![\d–½¼¾⅓⅔])/.exec(pre), all = segs.map(tailQty), now = kept.map(tailQty);
+      if (a >= 0 && m && all.every(function (x) { return x !== null; }) && Math.abs(sum(all) - qty(m[1])) < 0.01) {
+        var nt = qtyText(sum(now)), after = pre.slice(m.index + m[1].length);
+        if (nt) {
+          if (sum(now) <= 1) after = after.replace(/^(\s+(?:(?:red|green|small|big|large)\s+)?)([A-Za-z]+)/, function (x, sp, w) { return sp + one(w); });
+          pre = pre.slice(0, m.index) + nt + after;
+        }
+      }
+      return pre + (a >= 0 ? ' ' : '') + kept.map(function (p) { return p.trim(); }).join(' · ');
+    }
+    var end = /\.\s*$/.test(html), out = html.replace(/\.\s*$/, '').split(/\.\s+/).map(function (sen) {
       // "Monday marinade: …", "Tonight: …" and label lines belong to that night alone
-      if (strip(sen).replace(/^[^A-Za-z]+/, '').search(reOff) === 0 && !reOn.test(strip(sen))) return s(sen);
-      return sen.split(/(;\s+)/).map(function (cl, j) {
-        if (j % 2) return cl;
-        var a = cl.lastIndexOf('→'), c = cl.indexOf(': '), pre, rest;
-        if (a >= 0) { pre = cl.slice(0, a + 1); rest = cl.slice(a + 1); }
-        else if (cl.indexOf(' · ') >= 0) { pre = c >= 0 ? cl.slice(0, c + 2) : ''; rest = c >= 0 ? cl.slice(c + 2) : cl; }
-        else return cl;
-        var all = 0, hit = 0, parts = rest.split(/( · )/).map(function (p, x) {
-          if (x % 2) return p;
-          all++;
-          if (bad(p)) { hit++; return s(p); }
-          return p;
-        });
-        return all && hit === all ? s(cl) : pre + parts.join('');
-      }).join('');
-    }).join('');
+      if (strip(sen).replace(/^[^A-Za-z]+/, '').search(reOff) === 0 && !reOn.test(strip(sen))) return '';
+      var parts = sen.split(/(;\s+|,\s+and\s+(?=[^,;]*→))/), res = '';
+      for (var j = 0; j < parts.length; j += 2) {
+        var c = clause(parts[j]);
+        if (c) res += (res ? parts[j - 1] : '') + c;
+      }
+      return res;
+    }).filter(Boolean);
+    return out.length ? out.join('. ') + (end ? '.' : '') : '';
   }
 
   // ----- The steps for one day -----
@@ -973,11 +1205,15 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
       var off = swappedNights(M), skip = off ? { n: n, off: off } : null, firstOpen = -1;
       h += blocksHTML(D.intro, ctx);
       if (W.tip) h += '<p class="tip">💡 ' + W.tip + '</p>';
-      if (skip) h += '<div class="note">✨ <b>My menu:</b> crossed-out prep is for nights you swapped, so skip it.</div>';
+      if (skip) h += '<div class="note">✨ <b>My menu:</b> the prep for the nights you swapped is already left out.</div>';
       D.groups.forEach(function (gr, gi) {
-        var tonight = /Tonight/.test(gr.title), title = gr.title, body;
+        var tonight = /Tonight/.test(gr.title), label = /Label/.test(gr.title), title = gr.title, body;
         if (tonight && q) { title = '🍳 Tonight · ' + esc(q.name) + ' (' + q.min + ' min)'; body = quickHTML(q, ctx); }
-        else body = blocksHTML(gr.blocks, ctx, tonight ? null : skip);
+        else body = blocksHTML(gr.blocks, ctx, tonight ? null : skip, label ? labelLine : null);
+        // a station with nothing left to do is left out
+        if (skip && !tonight && gr.blocks.some(function (b) { return b.items; }) && body.indexOf('<li') < 0) return;
+        if (label) body = '<div class="boxsum">📦 <b>' + boxList(n, S).length + ' boxes and pudis</b> to label this week<button class="linkbtn" data-act="boxes">See them all</button></div>' + body;
+        if (/Chop/.test(gr.title) && /breakfast mix/.test(JSON.stringify(gr.blocks))) body = '<div class="note">☀️ ' + bfText('Breakfast mix') + '</div>' + body;
         var key = n + ':' + gi, open = openGroups[key];
         if (open === undefined) {
           var all = (body.match(/class="tk[ "]/g) || []).length, done = (body.match(/class="tk[^"]* done"/g) || []).length;
@@ -1102,6 +1338,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
       q.steps = body.split(/\.\s+(?=[^a-z])/).map(function (x, i, a) { return x + (i < a.length - 1 ? '.' : ''); });
     }
     q.text = (q.name + ' ' + q.steps.map(strip).join(' ')).toLowerCase();
+    q.needs = ['ip', 'af'].filter(function (k) { return q.steps.join(' ').indexOf(k === 'ip' ? '🍲' : '💨') >= 0; });
     QMAP[q.id] = q;
     return true;
   });
@@ -1136,7 +1373,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   function prefsFull() {
     var p = state.prefs || {}, m = p.meats || {};
     return { meats: { c: m.c !== false, m: m.m !== false, b: m.b !== false, f: m.f !== false, e: m.e !== false },
-      veg: p.veg || 1, spice: p.spice || 2, time: p.time || 0, sunday: p.sunday || 'takeaway', avoid: p.avoid || [] };
+      veg: p.veg || 1, spice: p.spice || 2, time: p.time || 0, sunday: p.sunday || 'takeaway', avoid: p.avoid || [], kit: p.kit || null };
   }
   var AV_CACHE = {};
   function avoidRe(P) {
@@ -1168,7 +1405,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     var rnd = rng(hash(seed + ':' + d)), best = null, top = -1;
     QUICK.forEach(function (q) {
       if (used[q.id] || whyNot(q, d, P) || (veg && !meatFree(q))) return;
-      var sc = (q.at.indexOf(d) >= 0 ? 3 : 0) + rnd() * 2.5 + (P.spice === 3 && q.s >= 3 ? 1 : 0) + (P.spice === 1 && q.s === 1 ? 1 : 0);
+      var sc = (q.at.indexOf(d) >= 0 ? 3 : 0) + rnd() * 2.5 + (P.spice === 3 && q.s >= 3 ? 1 : 0) + (P.spice === 1 && q.s === 1 ? 1 : 0) - (P.kit ? q.needs.filter(function (k) { return P.kit[k] === false; }).length * 2 : 0);
       if (sc > top) { top = sc; best = q; }
     });
     return best;
@@ -1322,6 +1559,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
       '<div class="ring" id="ring" hidden><svg viewBox="0 0 58 58"><circle class="tr" cx="29" cy="29" r="25"/><circle class="fg" cx="29" cy="29" r="25" stroke-dasharray="157.1" stroke-dashoffset="157.1"/></svg><span></span></div></div>' +
       '<div class="pills">' + pills.join('') + '</div>' +
       '<div class="actions"><button class="act main" data-act="cook">👩‍🍳 Cook mode' + lk + '</button>' +
+      (d === 'sat' ? '<button class="act" data-act="boxes">📦 Boxes</button>' : '') +
       (M ? '<button class="act" data-act="change">🔁 Change meal' + (PLUS.PICK_MEALS ? lk : '') + '</button>' : '') +
       '<button class="act fav' + (fav ? ' on' : '') + '" data-act="fav">' + (fav ? '❤️ Loved' : '🤍 Love it') + lk + '</button>' +
       '<button class="act" data-act="note">📝 Note' + lk + '</button>' +
@@ -1330,7 +1568,8 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     h += bfLine(d);
     var J = W.juice && W.juice[d];
     if (J) h += '<div class="note">🧃 <b>' + esc(J.name) + ' juice</b> (today\'s pack): ' + esc(J.what) + '.</div>';
-    h += stepsHTML(n, W, d, S, ctx, true);
+    var steps = stepsHTML(n, W, d, S, ctx, true);
+    h += takeOut(n, d, S) + kitNote(steps) + steps;
     h += '<div class="foot"><button class="linkbtn small" data-act="clearWeek" style="color:var(--muted)">Clear this week\'s ticks</button></div>';
     return h;
   }
@@ -1365,6 +1604,8 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
 
   // Taps inside the Today view
   $('view-today').addEventListener('click', function (e) {
+    var sy = e.target.closest('.sym');
+    if (sy) { symInfo(sy.getAttribute('data-sym')); return; }
     var tm = e.target.closest('.tm');
     if (tm) { e.stopPropagation(); var st = tm.closest('.tk'); startTimer(+tm.getAttribute('data-min'), st ? strip(st.querySelector('.tx').innerHTML) : title()); return; }
     var tk = e.target.closest('.tk');
@@ -1396,6 +1637,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     else if (a === 'note') need('fav', editNote);
     else if (a === 'print') need('print', printWeek);
     else if (a === 'change') pickMeal(view.w, instanceStart(view.w), view.d);
+    else if (a === 'boxes') openBoxes(view.w, instanceStart(view.w));
     else if (a === 'quiz') openQuiz();
     else if (a === 'noquiz') { state.prefs.skipped = Date.now(); save(); renderToday(); renderMenu(); toast('No problem! Plan your menu any time from 🍽️ Menu.'); }
   });
@@ -1595,6 +1837,8 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   }
   function closeCook() { $('cook').classList.remove('show'); document.body.style.overflow = ''; $('cook').innerHTML = ''; }
   $('cook').addEventListener('click', function (e) {
+    var sy = e.target.closest('.sym');
+    if (sy) { symInfo(sy.getAttribute('data-sym')); return; }
     var tm = e.target.closest('.tm');
     if (tm) { startTimer(+tm.getAttribute('data-min'), strip(cook.list[cook.i].querySelector('.tx').innerHTML)); return; }
     var b = e.target.closest('[data-c]'); if (!b) return;
@@ -1757,7 +2001,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     var plan = { id: 'plan', e: pi.e, name: pi.name, meta: d === 'sun' ? 'Takeaway, the plan\'s idea' : 'The plan\'s dinner' + (d === 'sat' ? '' : ' · ' + timeTxt(n, d)), why: pw };
     var opts = QUICK.map(function (q) {
       var w = whyNot(q, d, P);
-      return { id: q.id, e: q.e, name: q.name, meta: '✨ Quick pick · ' + q.min + ' min · ' + PN[q.p] + (used[q.id] ? ' · also on ' + used[q.id] : ''), why: w,
+      return { id: q.id, e: q.e, name: q.name, meta: '✨ Quick pick · ' + q.min + ' min · ' + PN[q.p] + (used[q.id] ? ' · also on ' + used[q.id] : '') + (P.kit ? q.needs.filter(function (k) { return P.kit[k] === false; }).map(function (k) { return ' · uses ' + (k === 'ip' ? 'a pressure cooker' : 'an air fryer'); }).join('') : ''), why: w,
         sc: (w ? 0 : 100) + (state.favs['q:' + q.id] ? 10 : 0) + (q.at.indexOf(d) >= 0 ? 5 : 0) - (used[q.id] ? 3 : 0) };
     }).sort(function (a, b) { return b.sc - a.sc || a.name.localeCompare(b.name); });
     function row(o) {
@@ -1790,6 +2034,9 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
         o: [[1, '🙂', 'Mild', 'Little ones at the table'], [2, '🌶️', 'Medium', 'A nice, warm kick'], [3, '🔥', 'Bring the heat', 'The spicier the better']] },
       { id: 'time', t: 'How long can you cook on weeknights?', d: 'The Saturday prep already makes most nights quick.',
         o: [[20, '⚡', '20 minutes or less'], [30, '⏱️', 'About 30 minutes'], [0, '🍲', 'I don\'t mind longer']] },
+      { id: 'kit', multi: true, t: 'Which of these do you have?', d: 'The plan uses them, but you can manage without. Tap the ones in your kitchen.',
+        o: KIT.map(function (k) { return [k[0], k[1], k[2], k[3]]; }) },
+      { id: 'symbols', info: true },
       { id: 'sunday', t: 'And Sunday dinner?',
         o: [['takeaway', '🥡', 'Takeaway night', 'Pizza, burgers, shawarma…'], ['cook', '🍳', 'Something easy at home', 'A quick recipe, no prep']] },
       { id: 'avoid', multi: true, text: true, t: 'Anything you don\'t eat?', d: 'We\'ll keep these off your menu. Tap Next if it\'s nothing.',
@@ -1805,7 +2052,8 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   function openQuiz() {
     var P = prefsFull();
     QZ = { i: state.prefs.done ? 0 : -1, steps: quizSteps(), a: { meats: { c: P.meats.c, m: P.meats.m, b: P.meats.b, f: P.meats.f, e: P.meats.e },
-      veg: P.veg > 3 ? 1 : P.veg, spice: P.spice, time: P.time, sunday: P.sunday, avoid: P.avoid.slice(), start: 'keep', ramadan: 'yes' } };
+      veg: P.veg > 3 ? 1 : P.veg, spice: P.spice, time: P.time, sunday: P.sunday, avoid: P.avoid.slice(), start: 'keep', ramadan: 'yes',
+      kit: JSON.parse(JSON.stringify(P.kit || {})), kitSet: !!P.kit }, first: !state.prefs.done };
     closeModal();
     $('quiz').classList.add('show'); document.body.style.overflow = 'hidden';
     paintQuiz();
@@ -1816,38 +2064,59 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   function isOn(st, v) {
     if (st.id === 'meats') return !!QZ.a.meats[v];
     if (st.id === 'avoid') return QZ.a.avoid.indexOf(v) >= 0;
+    if (st.id === 'kit') return !!QZ.a.kit[v];
     return String(QZ.a[st.id]) === String(v);
   }
   function paintQuiz() {
-    var el = $('quiz'), st = QZ.steps, i = QZ.i, h;
+    var el = $('quiz'), st = QZ.steps, i = QZ.i, h, t, M;
     if (i < 0) {
+      // Welcome: the rules in a nutshell
       h = '<div class="qtop"><button class="x" data-q="exit" aria-label="Close">✕</button><div style="flex:1"></div></div>' +
-        '<div class="qbody qhero"><div class="big">👩‍🍳</div><h2>Let\'s make the plan yours</h2>' +
-        '<p class="small" style="font-size:16px">A few quick questions, about a minute. We\'ll suggest a weekly menu for your family, and you can change any meal.</p></div>' +
-        '<div class="qnav col"><button class="btn next" data-q="next">Let\'s go</button><button class="linkbtn" data-q="exit">Not now, show me the classic plan</button></div>';
-    } else if (i >= st.length) {
-      var t = menuTarget(0), M = t.n ? menuFor(t.n, t.S) : null, sw = 0, list = '';
+        '<div class="qbody"><div class="qhero"><div class="big sm">👩‍🍳</div><h2>Welcome to Family Kitchen</h2><p class="small" style="font-size:15.5px;margin:0">Here\'s how it works:</p></div>' + rulesHTML() + '</div>' +
+        '<div class="qnav col"><button class="btn next" data-q="next">Set up my menu</button><button class="linkbtn" data-q="exit">Not now, show me the classic plan</button></div>';
+    } else if (i === st.length) {
+      // The menu is ready
+      t = menuTarget(0); M = t.n ? menuFor(t.n, t.S) : null;
+      var sw = 0, list = '';
       if (M) DAYS.forEach(function (d) {
         if (M.picks[d] !== 'plan') sw++;
         var x = nightInfo(t.n, d, M.picks[d]);
         list += '<div class="mrow"><span class="md">' + DAY_SHORT[d] + '</span><span class="mi">' + x.e + '</span><span class="mn">' + esc(x.name) + '<small>' + esc(x.meta) + '</small></span></div>';
       });
+      var boxes = QZ.first && M;
       h = '<div class="qtop"><div style="flex:1"></div><button class="x" data-q="done" aria-label="Close">✕</button></div>' +
-        '<div class="qbody"><div class="qhero"><div class="big">🎉</div><h2>Your menu is ready!</h2><p class="small" style="font-size:15.5px">' +
+        '<div class="qbody"><div class="qhero"><div class="big sm">🎉</div><h2>Your menu is ready!</h2><p class="small" style="font-size:15.5px">' +
         (!M ? 'Your answers are saved. Your menu starts when the weeks start again.' : sw ? sw + ' night' + (sw > 1 ? 's' : '') + ' changed to suit your family. You can change any meal.' : 'This week\'s plan already suits your family. You can change any meal.') +
         '</p></div>' + (list ? '<div class="panel menu" style="margin-top:12px">' + list + '</div>' : '') + '</div>' +
-        '<div class="qnav col"><button class="btn next" data-q="cook">Let\'s cook! 🎉</button>' + (M ? '<button class="btn secondary" data-q="change">Change some meals</button>' : '') +
+        '<div class="qnav col">' + (boxes ? '<button class="btn next" data-q="boxes">Next: your boxes ›</button>' : '<button class="btn next" data-q="cook">Let\'s cook! 🎉</button>') +
+        (M ? '<button class="btn secondary" data-q="change">Change some meals</button>' : '') +
         '<button class="linkbtn" data-q="classic">Keep the classic plan instead</button></div>';
+    } else if (i > st.length) {
+      // The boxes to fill and label on Saturday
+      t = menuTarget(0);
+      h = '<div class="qtop"><div style="flex:1"></div><button class="x" data-q="done" aria-label="Close">✕</button></div>' +
+        '<div class="qbody"><div class="qn">Before Saturday</div><h2>Your boxes for Week ' + t.n + '</h2>' +
+        '<p class="small" style="font-size:15px">On prep day you fill these and write each name on its box or pudi. The steps use the same names. Masking tape and a marker work well.</p>' +
+        boxesHTML(t.n, t.S, false) + '</div>' +
+        '<div class="qnav col"><button class="btn next" data-q="cook">Let\'s cook! 🎉</button></div>';
     } else {
-      var s = st[i], vis = st.filter(qShown), num = vis.indexOf(s) + 1;
-      h = '<div class="qtop"><button class="x" data-q="exit" aria-label="Close">✕</button><div class="qbar"><span style="width:' + Math.round((num - 1) / vis.length * 100) + '%"></span></div>' +
-        '<button class="qskip" data-q="skip">Skip</button></div>' +
-        '<div class="qbody"><div class="qn">Question ' + num + ' of ' + vis.length + '</div><h2>' + s.t + '</h2>' + (s.d ? '<p class="small" style="font-size:15px;margin:0">' + s.d + '</p>' : '') +
-        '<div class="qopts' + (s.id === 'avoid' ? ' two' : '') + '">' + s.o.map(function (o) {
-          return '<button class="qo' + (isOn(s, o[0]) ? ' on' : '') + '" data-v="' + o[0] + '"><span class="qe">' + o[1] + '</span><span class="ql"><b>' + o[2] + '</b>' + (o[3] ? '<small>' + o[3] + '</small>' : '') + '</span><span class="ck"></span></button>';
-        }).join('') + '</div>' +
-        (s.text ? '<input id="qText" style="margin-top:12px" placeholder="Anything else? e.g. peas, lamb liver" autocomplete="off" value="' + esc(QZ.a.avoid.filter(function (x) { return !AVOID.some(function (y) { return y[0] === x; }); }).join(', ')) + '">' : '') +
-        '</div><div class="qnav"><button class="btn secondary back" data-q="back" aria-label="Back">‹</button><button class="btn next" data-q="next">Next ›</button></div>';
+      var s = st[i], vis = st.filter(qShown), qs = vis.filter(function (x) { return !x.info; });
+      h = '<div class="qtop"><button class="x" data-q="exit" aria-label="Close">✕</button><div class="qbar"><span style="width:' + Math.round(vis.indexOf(s) / vis.length * 100) + '%"></span></div>' +
+        '<button class="qskip" data-q="skip">Skip</button></div>';
+      if (s.info) {
+        var kit = null;
+        if (QZ.a.kitSet) { kit = {}; KIT.forEach(function (k) { kit[k[0]] = !!QZ.a.kit[k[0]]; }); }
+        h += '<div class="qbody"><div class="qn">Good to know</div><h2>What the symbols mean</h2>' +
+          '<p class="small" style="font-size:15px;margin:0">You\'ll see these in the steps. Tap one any time to check what it means.</p>' + legendHTML(kit) + '</div>' +
+          '<div class="qnav"><button class="btn secondary back" data-q="back" aria-label="Back">‹</button><button class="btn next" data-q="next">Got it ›</button></div>';
+      } else {
+        h += '<div class="qbody"><div class="qn">Question ' + (qs.indexOf(s) + 1) + ' of ' + qs.length + '</div><h2>' + s.t + '</h2>' + (s.d ? '<p class="small" style="font-size:15px;margin:0">' + s.d + '</p>' : '') +
+          '<div class="qopts' + (s.id === 'avoid' ? ' two' : '') + '">' + s.o.map(function (o) {
+            return '<button class="qo' + (isOn(s, o[0]) ? ' on' : '') + '" data-v="' + o[0] + '"><span class="qe">' + o[1] + '</span><span class="ql"><b>' + o[2] + '</b>' + (o[3] ? '<small>' + o[3] + '</small>' : '') + '</span><span class="ck"></span></button>';
+          }).join('') + '</div>' +
+          (s.text ? '<input id="qText" style="margin-top:12px" placeholder="Anything else? e.g. peas, lamb liver" autocomplete="off" value="' + esc(QZ.a.avoid.filter(function (x) { return !AVOID.some(function (y) { return y[0] === x; }); }).join(', ')) + '">' : '') +
+          '</div><div class="qnav"><button class="btn secondary back" data-q="back" aria-label="Back">‹</button><button class="btn next" data-q="next">Next ›</button></div>';
+      }
     }
     el.innerHTML = h;
     el.scrollTop = 0;
@@ -1881,6 +2150,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     P.done = Date.now(); P.on = true; delete P.skipped;
     if (a.start === 'now') { state.anchor = isoOf(nextSat(T)); state.anchorWeek = 1; }
     if (a.ramadan === 'no') { state.pauseFrom = ''; state.pauseTo = ''; }
+    if (a.kitSet) { P.kit = {}; KIT.forEach(function (k) { P.kit[k[0]] = !!a.kit[k[0]]; }); }
     menuWeek = 0;
     save(); refreshToday(); resetView(); renderAll();
   }
@@ -1890,6 +2160,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     if (o && st) {
       var v = o.getAttribute('data-v');
       if (st.id === 'meats') { QZ.a.meats[v] = !QZ.a.meats[v]; o.classList.toggle('on'); }
+      else if (st.id === 'kit') { QZ.a.kit[v] = !QZ.a.kit[v]; QZ.a.kitSet = true; o.classList.toggle('on'); }
       else if (st.id === 'avoid') { var k = QZ.a.avoid.indexOf(v); if (k >= 0) QZ.a.avoid.splice(k, 1); else QZ.a.avoid.push(v); o.classList.toggle('on'); }
       else {
         QZ.a[st.id] = /^\d+$/.test(v) ? +v : v;
@@ -1902,7 +2173,9 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     }
     if (!b) return;
     var a = b.getAttribute('data-q');
+    if (a === 'next' && st && st.id === 'kit') QZ.a.kitSet = true; // Next with none ticked means none
     if (a === 'next' || a === 'skip') qMove(1);
+    else if (a === 'boxes') { QZ.i = QZ.steps.length + 1; paintQuiz(); }
     else if (a === 'back') qMove(-1);
     else if (a === 'exit') {
       var first = !state.prefs.done;
@@ -2005,7 +2278,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     [/pineapple/, '🍍'], [/grape/, '🍇'], [/pear/, '🍐'], [/oat/, '🥣'], [/honey/, '🍯'], [/sugar|salt|masala|spice/, '🧂'], [/tea|chai|coffee/, '☕'], [/juice/, '🧃'], [/nappy|diaper|baby/, '👶']];
   function emojiFor(t) { t = t.toLowerCase(); for (var i = 0; i < EMOJI.length; i++) if (EMOJI[i][0].test(t)) return EMOJI[i][1]; return '🛍️'; }
   function renderGroceries() {
-    var list = state.groceries, plus = isPlus(), left = list.filter(function (x) { return !x.done; }).length;
+    var list = state.groceries, plus = isPlus() || PLUS.GROCERIES_FREE, left = list.filter(function (x) { return !x.done; }).length;
     var h = '<div class="panel"><div class="row" style="align-items:flex-start"><div style="flex:1"><h2>🛒 Groceries</h2><p class="small" style="margin:0">' +
       (list.length ? left + ' to buy · ' + (list.length - left) + ' in the basket' : 'Your shopping list, right next to your meal plan.') + '</p></div>' +
       (list.length ? '<button class="btn sm" data-g="share" style="flex:none">📤 Share</button>' : '') + '</div>' +
@@ -2039,7 +2312,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
   $('view-groceries').addEventListener('click', function (e) {
     var g = e.target.closest('[data-g]'), q = e.target.closest('[data-q]'), it = e.target.closest('.gi');
     if (g && g.getAttribute('data-g') === 'unlock') { openPaywall('grocery'); return; }
-    if (!isPlus()) return;
+    if (!isPlus() && !PLUS.GROCERIES_FREE) return;
     if (q) { addGrocery(q.getAttribute('data-q')); return; }
     if (it) {
       var id = it.getAttribute('data-id'), x = state.groceries.filter(function (y) { return y.id === id; })[0]; if (!x) return;
@@ -2066,9 +2339,11 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
       '<li>✅ Tap a step to tick it off. Ticks stay on this phone and clear when that week comes round again.</li>' +
       '<li>🔥 Finish every step in a day to grow your cooking streak.</li>' +
       '<li>🍽️ My menu: answer a few questions in the Menu tab, then change any night to something your family likes.</li>' +
+      '<li>👆 Tap a symbol in a step to see what it means.</li>' +
       '<li>👆 Swipe left or right on a day to move between days.</li>' +
       '<li>⚙️ Wrong week? Fix it in Week settings.</li></ul></div>';
-    $('startBody').innerHTML = how + blocksHTML(PLAN.start, null);
+    $('startBody').innerHTML = '<h4 style="margin-top:4px">The rules</h4>' + rulesHTML() + '<h4>What the symbols mean</h4>' + legendHTML(state.prefs.kit) + how +
+      blocksHTML(PLAN.start.filter(function (b) { return !(b.t === 'table' || (b.t === 'h' && /icons/i.test(b.h)) || (b.t === 'p' && /^GGP means/.test(strip(b.h)))); }), null);
     var p = pauseRange();
     $('ramBody').innerHTML = (p ? '<div class="note">🗓️ <b>Paused</b> from ' + fmt(p.a, true) + (p.b === Infinity ? ' until you restart the weeks.' : '; Week ' + (weekAt(p.b).n || '') + ' starts ' + fmt(p.b, true) + '.') +
       ' <button class="linkbtn" data-act="settings">Change dates</button></div>' : '<div class="note">No Ramadan pause is set. <button class="linkbtn" data-act="settings">Set dates</button></div>') +
@@ -2080,6 +2355,7 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     var a = e.target.closest('[data-act]'); if (a && a.getAttribute('data-act') === 'settings') openSettings();
   });
   $('openSettings').addEventListener('click', openSettings);
+  $('openBoxes').addEventListener('click', function () { var t = menuTarget(0); openBoxes(t.n, t.S); });
 
   // ---------- Week settings ----------
   function openSettings() {
@@ -2129,9 +2405,9 @@ s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--mut
     $('cfYes').addEventListener('click', function () { closeModal(); fn(); });
   }
   var toastTimer = null;
-  function toast(msg) {
+  function toast(msg, ms) {
     var t = $('toast'); t.textContent = msg; t.classList.add('show');
-    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, ms || 2600);
   }
   var BITS = ['🎉', '✨', '🍅', '🥕', '🌶️', '🧅', '🍋', '🥚', '💛', '⭐'];
   function celebrate() {
