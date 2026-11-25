@@ -633,7 +633,13 @@ button.box{cursor:pointer}
   var PLUS = {
     STORE_ID: '',          // your Lemon Squeezy store ID (numbers only), so keys from other stores don't work
     TRIAL_DAYS: 7,         // free trial length; 0 turns the trial off
-    GROCERIES_FREE: true,  // the grocery list is free for now; set to false to make it a Plus feature again
+    GROCERIES_FREE: false, // true makes the grocery list free for everyone
+    // Tester keys unlock Plus without paying. Only each key's fingerprint (SHA-256) is kept here, never the key,
+    // so the key can't be found by reading the code. Delete a line to stop that key working.
+    TESTER_KEYS: [
+      'aa08246a0eb79fe5a8eb0e09545a147c7db77b6a1117185f6b53db1a52c40302'
+    ],
+    TESTER_UNTIL: '',      // last day tester keys work, e.g. '2027-03-31'; '' means no end date
     VOICE_FREE: false,     // true: hands-free voice for everyone (it also opens Cook mode for voice cooking)
     PICK_MEALS: false,     // true: changing meals in My menu needs Plus (the questions and suggested menu stay free)
     PLANS: [
@@ -746,14 +752,13 @@ button.box{cursor:pointer}
   }
 
   // ---------- Kitchen Plus ----------
-  var PREVIEW = /[?&]plus=preview\b/.test(location.search); // for your own testing only; not saved
   var GRACE = 21 * 864e5, RECHECK = 2 * 864e5;
   function trialLeft() {
     var t = state.plus.trialStart; if (!t) return 0;
     return Math.max(0, Math.ceil((t + PLUS.TRIAL_DAYS * 864e5 - Date.now()) / 864e5));
   }
   function licensed() { var p = state.plus; return !!(p.ok && p.key && Date.now() - (p.checked || 0) < GRACE); }
-  function isPlus() { return PREVIEW || licensed() || trialLeft() > 0; }
+  function isPlus() { return licensed() || trialLeft() > 0; }
   var FEATURES = {
     timers: ['⏱', 'One-tap cooking timers', 'Tap any “10 min” in a step and a timer starts, with an alarm.'],
     cook: ['👩‍🍳', 'Cook mode', 'One big step at a time, and the screen stays on.'],
@@ -775,9 +780,32 @@ button.box{cursor:pointer}
     }).then(function (r) { return r.json(); });
   }
   function storeOk(meta) { return !PLUS.STORE_ID || (meta && String(meta.store_id) === String(PLUS.STORE_ID)); }
+  function sha256(text, cb) {
+    try {
+      crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+        cb(Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''));
+      }, function () { cb(''); });
+    } catch (e) { cb(''); }
+  }
+  // Spaces, dashes and small letters don't matter: 'fk abcd …' works like 'FK-ABCD-…'
+  function testerPrint(key, cb) { sha256('family-kitchen/tester/' + String(key).toUpperCase().replace(/[^A-Z0-9]/g, ''), cb); }
+  function testerOver() { return !!PLUS.TESTER_UNTIL && todayNum() > dayNum(PLUS.TESTER_UNTIL); }
   function activate(key, done) {
     key = String(key || '').trim();
     if (!key) { done('Paste your licence key first'); return; }
+    testerPrint(key, function (fp) {
+      if (fp && PLUS.TESTER_KEYS.indexOf(fp) >= 0) {
+        if (testerOver()) { done('Testing has finished. Thank you for helping!'); return; }
+        // Only the fingerprint is kept on the phone, never the key
+        state.plus.key = 'tester'; state.plus.tester = 1; state.plus.th = fp; state.plus.inst = '';
+        state.plus.ok = true; state.plus.checked = Date.now(); state.plus.plan = 'Tester';
+        save(); done(null);
+        return;
+      }
+      activateStore(key, done);
+    });
+  }
+  function activateStore(key, done) {
     var name = 'Family Kitchen · ' + (navigator.platform || 'phone') + ' · ' + new Date().toISOString().slice(0, 10);
     api('activate', { license_key: key, instance_name: name }).then(function (r) {
       if (!r || !r.activated || !storeOk(r.meta)) { done((r && r.error) || 'That key did not work. Check it and try again.'); return; }
@@ -788,6 +816,14 @@ button.box{cursor:pointer}
   }
   function recheck() {
     var p = state.plus;
+    if (p.tester) {
+      // Tester keys are checked on the phone each time: removing a fingerprint or passing TESTER_UNTIL ends them
+      var ok = PLUS.TESTER_KEYS.indexOf(p.th) >= 0 && !testerOver();
+      if (!ok && p.ok) toast('Tester access has ended. Thank you for testing Family Kitchen!', 5000);
+      p.ok = ok; if (ok) p.checked = Date.now();
+      save(); paintPlus();
+      return;
+    }
     if (!p.key || !navigator.onLine || Date.now() - (p.checked || 0) < RECHECK) return;
     var body = { license_key: p.key }; if (p.inst) body.instance_id = p.inst;
     api('validate', body).then(function (r) {
@@ -851,25 +887,26 @@ button.box{cursor:pointer}
   function paintPlus() {
     var b = $('plusBtn'), on = isPlus(), tl = trialLeft();
     b.classList.toggle('on', on);
-    b.textContent = licensed() || PREVIEW ? '👑 Plus' : tl ? '👑 Trial · ' + tl + 'd' : '✨ Get Plus';
+    b.textContent = licensed() ? '👑 Plus' : tl ? '👑 Trial · ' + tl + 'd' : '✨ Get Plus';
     var c = $('plusCard'), h;
     if (licensed()) {
-      h = '<h3 style="margin-top:0">👑 Kitchen Plus is on</h3><p class="small">Thank you for supporting Family Kitchen' + (state.plus.plan ? ' (' + esc(state.plus.plan) + ')' : '') + '. Every Plus feature is unlocked on this phone.</p>' +
+      h = (state.plus.tester ? '<h3 style="margin-top:0">🧪 Tester access is on</h3><p class="small">Thank you for testing Family Kitchen! Every Plus feature is unlocked on this phone.</p>'
+        : '<h3 style="margin-top:0">👑 Kitchen Plus is on</h3><p class="small">Thank you for supporting Family Kitchen' + (state.plus.plan ? ' (' + esc(state.plus.plan) + ')' : '') + '. Every Plus feature is unlocked on this phone.</p>') +
         '<button class="btn secondary wide" id="plusOff">Remove the key from this phone</button>';
     } else if (tl) {
       h = '<h3 style="margin-top:0">👑 Plus trial: ' + tl + ' day' + (tl === 1 ? '' : 's') + ' left</h3><p class="small">Enjoying hands-free voice, timers and cook mode? Keep them after your trial.</p><button class="btn wide" id="plusGo">See Plus plans</button>';
     } else {
-      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Hands-free voice, timers, cook mode, favourites, colour themes, and printing the week and your box labels.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
+      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Hands-free voice, ' + (PLUS.GROCERIES_FREE ? '' : 'a grocery list, ') + 'timers, cook mode, favourites, colour themes, and printing the week and your box labels.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
     }
     c.innerHTML = h;
     if ($('plusGo')) $('plusGo').addEventListener('click', function () { openPaywall(); });
     if ($('plusOff')) $('plusOff').addEventListener('click', function () {
       confirmBox('Remove your licence key from this phone? You can add it again later.', 'Remove', function () {
-        state.plus.key = ''; state.plus.ok = false; save(); paintPlus(); renderAll(); toast('Key removed');
+        state.plus.key = ''; state.plus.ok = false; state.plus.tester = 0; state.plus.th = ''; save(); paintPlus(); renderAll(); toast('Key removed');
       });
     });
   }
-  $('plusBtn').addEventListener('click', function () { if (licensed() || PREVIEW) showTab('more'); else openPaywall(); });
+  $('plusBtn').addEventListener('click', function () { if (licensed()) showTab('more'); else openPaywall(); });
 
   // ---------- Theme ----------
   var ACCENTS = [['tomato', '#FF6A3D'], ['mango', '#F59E0B'], ['herb', '#16A34A'], ['berry', '#E11D74'], ['ocean', '#0E8FD6'], ['plum', '#7C4DFF']];

@@ -8,7 +8,7 @@ The meal plan stays **free for everyone**. That keeps people sharing the app on 
 | ⏱ One-tap timers: tap any "10 min" in a step | Useful at the stove every night |
 | 👩‍🍳 Cook mode: one big step at a time, screen stays on | Hands-free cooking |
 | 🎙️ Hands-free voice: steps read out loud; say “next”, “repeat”, “timer 10 minutes”, “what’s for dinner”, “add milk to the list” | The feature people show their friends. Set `VOICE_FREE: true` to give it to everyone |
-| 🛒 Grocery list: tick items off, share on WhatsApp | **Free for now.** Set `GROCERIES_FREE: false` to make it Plus again |
+| 🛒 Grocery list: tick items off, share on WhatsApp | Used every week, so people keep paying. Set `GROCERIES_FREE: true` to give it to everyone |
 | 🏷️ Print box labels for the week (part of printing) | Saves writing 20+ labels every Saturday |
 | ❤️ Favourites and 📝 notes | Their own data, so they don't want to leave |
 | 🎨 Five extra colour themes | Fun and personal |
@@ -64,9 +64,14 @@ It also handles worldwide sales tax/VAT for you, and it sends each buyer a **lic
 **How buyers unlock:** they pay, get an email with their key, then tap **✨ Get Plus → I already have a licence key**, paste it and tap **Unlock**.
 You can also send people a link like `https://<your-site>/?license=THEIR-KEY`. It opens the app with the key already filled in.
 
-## Testing it yourself
+## Testing it yourself, and tester keys
 
-- Add `?plus=preview` to the app's address to see everything unlocked. Nothing is saved, so close the tab to go back.
+- **Tester key:** you have a tester key (shared with you privately, not stored anywhere in this repo). It unlocks every Plus feature.
+  Testers enter it in **✨ Get Plus → I already have a licence key**. Capital letters, spaces and dashes don't matter.
+- **How it stays secret:** the code keeps only the key's *fingerprint* (a SHA-256 hash) in `TESTER_KEYS`. Nobody can work the key out from the fingerprint.
+- **Ending tester access:** set `TESTER_UNTIL` to a date, e.g. `'2027-03-31'`. To stop one key straight away, delete its fingerprint line.
+  Phones notice the next time the app opens.
+- **More keys:** ask Claude to generate another tester key. It adds only the new fingerprint to `TESTER_KEYS`.
 - Add `?date=2027-01-18` to pretend it's a different day.
 - In Lemon Squeezy, use **test mode** to buy with a test card and get a real test key.
 
@@ -78,5 +83,5 @@ You can also send people a link like `https://<your-site>/?license=THEIR-KEY`. I
 
 ## Honest limits
 
-- Licence checks run on the phone. Someone technical could get around them. That's normal for web apps at this size, and it isn't worth worrying about.
+- Licence checks run on the phone. Someone technical could edit the app in their own browser to get around them, but they can't find the tester key. That's normal for web apps at this size, and it isn't worth worrying about.
 - Your data and your users' data stay on their phones. Nothing is sent anywhere, except the licence key when checking it with Lemon Squeezy.
