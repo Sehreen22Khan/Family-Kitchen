@@ -7,6 +7,7 @@ The meal plan stays **free for everyone**. That keeps people sharing the app on 
 |---|---|
 | ⏱ One-tap timers: tap any "10 min" in a step | Useful at the stove every night |
 | 👩‍🍳 Cook mode: one big step at a time, screen stays on | Hands-free cooking |
+| 🎙️ Hands-free voice: steps read out loud; say “next”, “repeat”, “timer 10 minutes”, “what’s for dinner”, “add milk to the list” | The feature people show their friends. Set `VOICE_FREE: true` to give it to everyone |
 | 🛒 Grocery list: tick items off, share on WhatsApp | **Free for now.** Set `GROCERIES_FREE: false` to make it Plus again |
 | 🏷️ Print box labels for the week (part of printing) | Saves writing 20+ labels every Saturday |
 | ❤️ Favourites and 📝 notes | Their own data, so they don't want to leave |

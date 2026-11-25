@@ -4,7 +4,7 @@
   1. Never change the storage name: kitchen-data-v1
   2. Only ADD new saved fields. Never rename or remove existing ones
      (anchor, anchorWeek, pauseFrom, pauseTo, ticks, start, done,
-      plus, groceries, notes, favs, theme, timersRun, prefs, menus).
+      plus, groceries, notes, favs, theme, timersRun, prefs, menus, voice).
   3. Never reset or overwrite saved data when the page loads.
   4. Never rename the GitHub username or the repo.
 -->
@@ -455,11 +455,37 @@ details.more>summary::-webkit-details-marker{display:none}
 .boxsum{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;font-size:14.5px;margin:6px 0 4px}
 .box{display:inline-block;margin:3px 5px 3px 0;padding:3px 9px;border-radius:9px;background:var(--brand-soft);color:var(--brand-text);font:inherit;font-weight:800;font-size:13.5px;border:0;line-height:1.5}
 button.box{cursor:pointer}
+.note .box,.tx .box{font-size:12.5px;padding:2px 8px;margin:2px 4px 2px 0}
 .bxg{padding:10px 0 6px;border-top:1px solid var(--line)}
 .bxg:first-of-type{border-top:0}
 .bxd{font-size:13px;color:var(--muted);margin-bottom:3px;font-weight:700}
 .bxd b{color:var(--text)}
 .qhero .big.sm{font-size:56px}
+
+/* ===== Voice ===== */
+.micbtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+#cook .ctop .vb{flex:none;border:0;background:var(--card2);color:var(--text);width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer}
+#cook .ctop .vb.on{background:var(--brand);color:var(--brand-ink);box-shadow:0 4px 12px -4px var(--brand)}
+.vbar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:10px;font-size:14.5px;min-height:46px;box-shadow:var(--shadow)}
+.vdot{flex:none;width:12px;height:12px;border-radius:50%;background:var(--muted);opacity:.35}
+.vdot.on{background:#E5484D;opacity:1;animation:pulse 1.3s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}70%{box-shadow:0 0 0 12px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+.vtx{flex:1;min-width:0;line-height:1.4;font-weight:700}
+.vtx i{font-style:normal;color:var(--brand-text);margin-right:4px}
+.vask{background:var(--brand-soft);border:1.5px solid var(--brand);border-radius:18px;padding:14px;margin-bottom:12px}
+.vchat{display:flex;flex-direction:column;gap:8px;max-height:38vh;min-height:56px;overflow-y:auto;margin:12px 0 6px;padding:2px}
+.vmsg{max-width:86%;padding:9px 13px;border-radius:18px;font-size:15px;line-height:1.45;font-weight:600}
+.vmsg.you{align-self:flex-end;background:var(--brand);color:var(--brand-ink);border-bottom-right-radius:6px}
+.vmsg.app{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:6px}
+.vmsg.live{opacity:.6}
+.vmic{display:block;margin:8px auto 12px;width:80px;height:80px;border-radius:50%;border:0;font-size:34px;background:linear-gradient(135deg,var(--brand2),var(--brand));color:var(--brand-ink);box-shadow:0 10px 24px -8px var(--brand);cursor:pointer}
+.vmic.on{background:#E5484D;animation:pulse 1.3s infinite}
+.vchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.vchips.left{justify-content:flex-start}
+.vchips button,.vchips span{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:700;color:var(--text)}
+.vchips button{cursor:pointer}
+.gmic{flex:none;width:52px;padding:0;font-size:20px}
+.gmic.on{background:#E5484D;color:#fff;border-color:#E5484D;animation:pulse 1.3s infinite}
 
 /* ===== Confetti ===== */
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
@@ -497,6 +523,7 @@ button.box{cursor:pointer}
     <img class="logo" src="icons/icon-192.png" alt="">
     <div><div class="bis">بسم الله</div><h1>Family Kitchen</h1></div>
   </div>
+  <button class="micbtn" id="micBtn" aria-label="Talk to Family Kitchen">🎙️</button>
   <button class="plusbtn" id="plusBtn">✨ Get Plus</button>
 </header>
 
@@ -527,6 +554,8 @@ button.box{cursor:pointer}
     <label>Colour theme</label>
     <div class="swatches" id="swatches"></div>
   </div>
+
+  <div class="panel" id="voicePanel"></div>
 
   <details class="panel sec" id="secStart"><summary>📖 Start here</summary><div class="sb" id="startBody"></div></details>
   <details class="panel sec" id="secRamadan"><summary>🌙 Ramadan and Eid</summary><div class="sb" id="ramBody"></div></details>
@@ -605,6 +634,7 @@ button.box{cursor:pointer}
     STORE_ID: '',          // your Lemon Squeezy store ID (numbers only), so keys from other stores don't work
     TRIAL_DAYS: 7,         // free trial length; 0 turns the trial off
     GROCERIES_FREE: true,  // the grocery list is free for now; set to false to make it a Plus feature again
+    VOICE_FREE: false,     // true: hands-free voice for everyone (it also opens Cook mode for voice cooking)
     PICK_MEALS: false,     // true: changing meals in My menu needs Plus (the questions and suggested menu stay free)
     PLANS: [
       { id: 'yearly',   name: 'Yearly',   sub: 'Best value · 2 months free', price: '$19.99', per: '/year',  link: '', save: 'SAVE 44%' },
@@ -633,7 +663,7 @@ button.box{cursor:pointer}
   // (Sat 6 Feb) until the first Saturday after Eid (Sat 13 Mar), which is Week 4.
   var DEFAULTS = { anchor: '2027-01-16', anchorWeek: 1, pauseFrom: '2027-02-06', pauseTo: '2027-03-13', ticks: {} };
   // Fields added later (only ever added, never renamed)
-  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [], prefs: {}, menus: {} };
+  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [], prefs: {}, menus: {}, voice: { read: true, listen: true, rate: 1, name: '', asked: false } };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -726,13 +756,15 @@ button.box{cursor:pointer}
   function isPlus() { return PREVIEW || licensed() || trialLeft() > 0; }
   var FEATURES = {
     timers: ['⏱', 'One-tap cooking timers', 'Tap any “10 min” in a step and a timer starts, with an alarm.'],
-    cook: ['👩‍🍳', 'Cook mode', 'One big step at a time, hands-free, and the screen stays on.'],
+    cook: ['👩‍🍳', 'Cook mode', 'One big step at a time, and the screen stays on.'],
+    voice: ['🎙️', 'Hands-free voice', 'Steps read out loud. Say “next”, “repeat” or “timer 10 minutes”, or ask what’s for dinner. Perfect for messy hands.'],
     grocery: ['🛒', 'Grocery list', 'Build your list, tick it off in the shop, send it on WhatsApp.'],
     fav: ['❤️', 'Favourites and notes', 'Remember the dishes your family loved and your own tweaks.'],
     themes: ['🎨', 'Colour themes', 'Make the app yours with five extra colour themes.'],
     print: ['🖨️', 'Print the week', 'A clean, fridge-ready page of the whole week’s plan.']
   };
   if (PLUS.GROCERIES_FREE) delete FEATURES.grocery;
+  if (PLUS.VOICE_FREE) delete FEATURES.voice;
   if (PLUS.PICK_MEALS) FEATURES.menu = ['🍽️', 'Pick every meal', 'Swap any night for a dish your family loves.'];
   function need(feature, fn) { if (isPlus()) fn(); else openPaywall(feature); }
 
@@ -825,9 +857,9 @@ button.box{cursor:pointer}
       h = '<h3 style="margin-top:0">👑 Kitchen Plus is on</h3><p class="small">Thank you for supporting Family Kitchen' + (state.plus.plan ? ' (' + esc(state.plus.plan) + ')' : '') + '. Every Plus feature is unlocked on this phone.</p>' +
         '<button class="btn secondary wide" id="plusOff">Remove the key from this phone</button>';
     } else if (tl) {
-      h = '<h3 style="margin-top:0">👑 Plus trial: ' + tl + ' day' + (tl === 1 ? '' : 's') + ' left</h3><p class="small">Enjoying timers and cook mode? Keep them after your trial.</p><button class="btn wide" id="plusGo">See Plus plans</button>';
+      h = '<h3 style="margin-top:0">👑 Plus trial: ' + tl + ' day' + (tl === 1 ? '' : 's') + ' left</h3><p class="small">Enjoying hands-free voice, timers and cook mode? Keep them after your trial.</p><button class="btn wide" id="plusGo">See Plus plans</button>';
     } else {
-      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Timers, cook mode, favourites, colour themes, and printing the week and your box labels.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
+      h = '<h3 style="margin-top:0">✨ Kitchen Plus</h3><p class="small">Hands-free voice, timers, cook mode, favourites, colour themes, and printing the week and your box labels.' + (PLUS.TRIAL_DAYS && !state.plus.trialStart ? ' Try it free for ' + PLUS.TRIAL_DAYS + ' days.' : '') + '</p><button class="btn wide" id="plusGo">See what’s included</button>';
     }
     c.innerHTML = h;
     if ($('plusGo')) $('plusGo').addEventListener('click', function () { openPaywall(); });
@@ -1065,14 +1097,19 @@ button.box{cursor:pointer}
     });
     $('bxPrint').addEventListener('click', function () { need('print', function () { closeModal(); printLabels(n, S); }); });
   }
-  function boxDetail(n, S, b) {
+  // The Saturday lines that fill a box
+  function boxLines(n, b) {
     var nm = b.name.toLowerCase(), longer = boxesOf(n).map(function (x) { return x.name.toLowerCase(); })
       .filter(function (x) { return x !== nm && x.indexOf(nm + ' ') === 0; }).map(function (x) { return reEsc(x.slice(nm.length + 1)); });
     var re = new RegExp('\\b' + reEsc(nm) + '\\b' + (longer.length ? '(?!\\s+(?:' + longer.join('|') + ')\\b)' : ''), 'i'), lines = [];
     PLAN.weeks[n - 1].days.sat.groups.forEach(function (g) {
       if (/Label|Tonight/.test(g.title)) return;
-      g.blocks.forEach(function (bl) { (bl.items || []).forEach(function (it) { if (re.test(strip(it))) lines.push('<li>' + withBreakfast(it) + '</li>'); }); });
+      g.blocks.forEach(function (bl) { (bl.items || []).forEach(function (it) { if (re.test(strip(it))) lines.push(it); }); });
     });
+    return lines;
+  }
+  function boxDetail(n, S, b) {
+    var lines = boxLines(n, b).map(function (it) { return '<li>' + withBreakfast(it) + '</li>'; });
     var k = WHO[b.who], used = k ? 'Used on ' + DAY_LONG[k] + ': ' + strip(PLAN.weeks[n - 1].glance[k].dinner) : b.who === 'Sunday' ? 'Used on Sunday, for breakfast or the treat' : 'Used for the week\'s breakfasts';
     openModal('<h3>📦 ' + esc(b.name) + '</h3><p class="small">' + b.icon + ' ' + WHERE[b.where] + (b.note ? ' ' + esc(b.note) : '') + '<br>' + esc(used) + '</p>' +
       (b.name === 'Breakfast mix' ? '<div class="note">' + bfText('Breakfast mix') + '</div>' : '') +
@@ -1559,6 +1596,7 @@ button.box{cursor:pointer}
       '<div class="ring" id="ring" hidden><svg viewBox="0 0 58 58"><circle class="tr" cx="29" cy="29" r="25"/><circle class="fg" cx="29" cy="29" r="25" stroke-dasharray="157.1" stroke-dashoffset="157.1"/></svg><span></span></div></div>' +
       '<div class="pills">' + pills.join('') + '</div>' +
       '<div class="actions"><button class="act main" data-act="cook">👩‍🍳 Cook mode' + lk + '</button>' +
+      ((canSpeak() || SR) ? '<button class="act" data-act="voice">🎙️ Hands-free' + (voiceOK() ? '' : ' <span class="lock">👑</span>') + '</button>' : '') +
       (d === 'sat' ? '<button class="act" data-act="boxes">📦 Boxes</button>' : '') +
       (M ? '<button class="act" data-act="change">🔁 Change meal' + (PLUS.PICK_MEALS ? lk : '') + '</button>' : '') +
       '<button class="act fav' + (fav ? ' on' : '') + '" data-act="fav">' + (fav ? '❤️ Loved' : '🤍 Love it') + lk + '</button>' +
@@ -1632,7 +1670,8 @@ button.box{cursor:pointer}
     else if (a === 'awake') setAwake(!wantAwake);
     else if (a === 'settings') openSettings();
     else if (a === 'browse') showTab('weeks');
-    else if (a === 'cook') need('cook', openCook);
+    else if (a === 'cook') need('cook', function () { openCook(); });
+    else if (a === 'voice') { if (voiceOK()) openCook({ voice: true }); else openPaywall('voice'); }
     else if (a === 'fav') need('fav', toggleFav);
     else if (a === 'note') need('fav', editNote);
     else if (a === 'print') need('print', printWeek);
@@ -1749,14 +1788,13 @@ button.box{cursor:pointer}
 
   // ---------- Cooking timers (Plus) ----------
   var timers = state.timersRun, tickTimer = null, audioCtx = null;
-  function startTimer(min, label) {
-    need('timers', function () {
-      if (!min) return;
-      unlockAudio();
-      timers.push({ id: Date.now() + Math.random(), end: Date.now() + min * 6e4, label: String(label).slice(0, 80) });
-      save(); paintTimers(); toast('⏱ ' + min + '-minute timer started');
-      if (window.Notification && Notification.permission === 'default') try { Notification.requestPermission(); } catch (e) {}
-    });
+  function startTimer(min, label) { need('timers', function () { addTimer(min, label); }); }
+  function addTimer(min, label) {
+    if (!(min > 0)) return;
+    unlockAudio();
+    timers.push({ id: Date.now() + Math.random(), end: Date.now() + min * 6e4, label: String(label).slice(0, 80) });
+    save(); paintTimers(); toast('⏱ ' + (min < 1 ? Math.round(min * 60) + '-second' : min + '-minute') + ' timer started');
+    if (window.Notification && Notification.permission === 'default') try { Notification.requestPermission(); } catch (e) {}
   }
   function unlockAudio() {
     try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
@@ -1791,6 +1829,7 @@ button.box{cursor:pointer}
           t.rang = now; beep(); if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
           if (!t.told) {
             t.told = 1; toast('⏰ Time’s up: ' + t.label.slice(0, 40));
+            if ((cookOpen() && state.voice.read) || VO.mode === 'sheet') say('Time\'s up! ' + shortLabel(t.label) + '. Say stop when you\'re ready.');
             if (window.Notification && Notification.permission === 'granted' && document.hidden) try { new Notification('⏰ Time’s up!', { body: t.label, icon: 'icons/icon-192.png' }); } catch (e) {}
           }
         }
@@ -1815,27 +1854,69 @@ button.box{cursor:pointer}
 
   // ---------- Cook mode (Plus) ----------
   var cook = { i: 0, list: [] };
-  function openCook() {
-    var steps = $('daycard').querySelectorAll('.tk');
+  // opts.voice: started with 🎙️ Hands-free, so steps are read out and the app listens
+  function openCook(opts) {
+    var card = $('daycard'), steps = card ? card.querySelectorAll('.tk') : [];
     if (!steps.length) { toast('No steps to cook today'); return; }
     cook.list = Array.prototype.slice.call(steps);
     cook.i = 0;
     for (var i = 0; i < cook.list.length; i++) if (!cook.list[i].classList.contains('done')) { cook.i = i; break; }
     $('cook').classList.add('show'); document.body.style.overflow = 'hidden';
     if ('wakeLock' in navigator && !wantAwake && !noWake) setAwake(true);
+    unlockAudio(); unlockSpeech();
+    if (opts && opts.voice) { state.voice.asked = true; state.voice.read = true; state.voice.listen = true; save(); }
+    VO.last = null; VO.idle = 0;
+    if (voiceOK() && state.voice.asked) { VO.mode = 'cook'; VO.want = !!(state.voice.listen && SR); }
     paintCook();
+    if (VO.mode === 'cook') {
+      if (state.voice.read) readStep('Let\'s cook ' + title() + '. ' + cook.list.length + ' steps. ');
+      else startRec();
+    }
   }
   function paintCook() {
     var el = cook.list[cook.i], n = cook.list.length, done = cook.list.filter(function (x) { return x.classList.contains('done'); }).length;
-    var isDone = el.classList.contains('done'), last = cook.i === n - 1;
-    $('cook').innerHTML = '<div class="ctop"><button class="x" data-c="close" aria-label="Close">✕</button><div class="c">👩‍🍳 ' + esc(title()) + '<br>' + done + ' of ' + n + ' done</div></div>' +
+    var isDone = el.classList.contains('done'), last = cook.i === n - 1, v = voiceOK(), asked = state.voice.asked;
+    $('cook').innerHTML = '<div class="ctop"><button class="x" data-c="close" aria-label="Close">✕</button><div class="c">👩‍🍳 ' + esc(title()) + '<br>' + done + ' of ' + n + ' done</div>' +
+      (v && canSpeak() ? '<button class="vb' + (asked && state.voice.read ? ' on' : '') + '" data-c="vread" aria-label="Read steps out loud">🔊</button>' : '') +
+      (v && SR ? '<button class="vb' + (VO.want ? ' on' : '') + '" data-c="vlisten" aria-label="Listen for what you say">🎙️</button>' : '') + '</div>' +
       '<div class="cbar"><span style="width:' + Math.round(done / n * 100) + '%"></span></div>' +
       '<div class="cbody"><div class="cnum">Step ' + (cook.i + 1) + ' of ' + n + '</div><div class="ctext">' + el.querySelector('.tx').innerHTML + '</div>' +
       (isDone ? '<div><span class="cdone">✓ Done</span></div>' : '') + '</div>' +
+      (v && !asked && (canSpeak() || SR) ? '<div class="vask"><b>🎙️ Cook hands-free?</b><p class="small" style="margin:4px 0 10px">I\'ll read each step out loud' +
+        (SR ? ' and listen for “next”, “repeat” or “timer 5 minutes”' : '') + '. No need to touch the screen with messy hands.</p>' +
+        '<div class="row"><button class="btn sm" data-c="vyes">Yes, talk to me</button><button class="btn secondary sm" data-c="vno">No thanks</button></div></div>' : '') +
+      (VO.mode === 'cook' && (state.voice.read || VO.want) ? '<div class="vbar" id="vbar"></div>' : '') +
       '<div class="cnav"><button class="btn secondary back" data-c="prev"' + (cook.i ? '' : ' disabled') + '>‹</button>' +
       '<button class="btn next" data-c="next">' + (isDone ? (last ? 'Finish 🎉' : 'Next ›') : (last ? '✓ Done, finish 🎉' : '✓ Done, next ›')) + '</button></div>';
+    paintVoice();
   }
-  function closeCook() { $('cook').classList.remove('show'); document.body.style.overflow = ''; $('cook').innerHTML = ''; }
+  function closeCook(keepTalking) {
+    $('cook').classList.remove('show'); document.body.style.overflow = ''; $('cook').innerHTML = '';
+    if (VO.mode === 'cook') { VO.mode = null; stopRec(); if (!keepTalking) hush(); }
+  }
+  function cookOpen() { return $('cook').classList.contains('show'); }
+  // next: tick and move on · skip: move on without ticking · prev: go back
+  function cookGo(c, byVoice) {
+    if (c === 'prev') {
+      if (!cook.i) { if (byVoice) reply('This is the first step.'); return; }
+      cook.i--; paintCook(); speakStep(); return;
+    }
+    var el = cook.list[cook.i];
+    if (c !== 'skip' && !el.classList.contains('done')) toggleTick(el, true);
+    if (cook.i < cook.list.length - 1) { cook.i++; paintCook(); speakStep(); return; }
+    if (VO.mode === 'cook' && state.voice.read) say('All done. Alhamdulillah! Enjoy your dinner.');
+    closeCook(true);
+    toast('Dinner is done. Alhamdulillah! 🎉');
+  }
+  function speakStep() { if (VO.mode === 'cook' && state.voice.read) readStep(); }
+  function readStep(before) {
+    var el = cook.list[cook.i]; if (!el) return;
+    var head = 'Step ' + (cook.i + 1) + ' of ' + cook.list.length;
+    VO.last = { you: VO.lastYou, app: head };
+    VO.lastYou = '';
+    paintVoice();
+    say((before || '') + head + '. ' + el.querySelector('.tx').textContent);
+  }
   $('cook').addEventListener('click', function (e) {
     var sy = e.target.closest('.sym');
     if (sy) { symInfo(sy.getAttribute('data-sym')); return; }
@@ -1843,12 +1924,29 @@ button.box{cursor:pointer}
     if (tm) { startTimer(+tm.getAttribute('data-min'), strip(cook.list[cook.i].querySelector('.tx').innerHTML)); return; }
     var b = e.target.closest('[data-c]'); if (!b) return;
     var c = b.getAttribute('data-c');
+    unlockSpeech();
     if (c === 'close') { closeCook(); return; }
-    if (c === 'prev') { if (cook.i) cook.i--; paintCook(); return; }
-    var el = cook.list[cook.i];
-    if (!el.classList.contains('done')) toggleTick(el, true);
-    if (cook.i < cook.list.length - 1) { cook.i++; paintCook(); }
-    else { closeCook(); toast('Dinner is done. Alhamdulillah! 🎉'); }
+    if (c === 'vyes' || c === 'vno') {
+      var yes = c === 'vyes';
+      state.voice.asked = true; state.voice.read = yes; state.voice.listen = yes; save();
+      VO.mode = yes ? 'cook' : null; VO.want = yes && !!SR;
+      paintCook();
+      if (yes) readStep();
+      return;
+    }
+    if (c === 'vread') {
+      state.voice.read = !(state.voice.asked && state.voice.read); state.voice.asked = true; save();
+      VO.mode = 'cook'; paintCook();
+      if (state.voice.read) readStep(); else hush();
+      return;
+    }
+    if (c === 'vlisten') {
+      state.voice.asked = true; state.voice.listen = !VO.want; save();
+      VO.mode = 'cook'; VO.want = state.voice.listen; paintCook();
+      if (VO.want) { VO.idle = 0; reply('I\'m listening. Say “help” to hear what I can do.'); startRec(); } else stopRec();
+      return;
+    }
+    cookGo(c === 'prev' ? 'prev' : 'next');
   });
   var csx = null;
   $('cook').addEventListener('touchstart', function (e) { csx = e.touches[0].clientX; }, { passive: true });
@@ -1856,8 +1954,399 @@ button.box{cursor:pointer}
     if (csx == null) return; var dx = e.changedTouches[0].clientX - csx; csx = null;
     if (Math.abs(dx) < 70) return;
     if (dx < 0 && cook.i < cook.list.length - 1) cook.i++; else if (dx > 0 && cook.i) cook.i--; else return;
-    paintCook();
+    paintCook(); speakStep();
   }, { passive: true });
+
+  // ---------- Voice: steps read out loud, and a kitchen you can talk to ----------
+  // Uses the browser's own speech, so it costs nothing. Reading out loud works almost everywhere;
+  // listening needs Chrome, Edge or Safari, and the first time the browser asks to use the microphone.
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var VO = { rec: null, want: false, speaking: false, mode: null, await: null, log: [], last: null, lastYou: '', interim: '', sayId: 0, idle: 0, unlocked: false };
+  function voiceOK() { return !!PLUS.VOICE_FREE || isPlus(); }
+  function canSpeak() { return 'speechSynthesis' in window; }
+  function unlockSpeech() {
+    // Phones only allow speech that starts with a tap, so the first tap says nothing, quietly
+    if (VO.unlocked || !canSpeak()) return;
+    VO.unlocked = true;
+    try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
+  }
+  function englishVoices() { return canSpeak() ? speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }) : []; }
+  function pickVoice() {
+    var vs = englishVoices(), want = state.voice.name;
+    // An Indian English voice says haldi, zeera and kothimir best
+    return vs.filter(function (v) { return v.name === want; })[0] || vs.filter(function (v) { return /en[-_]IN/i.test(v.lang); })[0] ||
+      vs.filter(function (v) { return /en[-_]GB/i.test(v.lang); })[0] || vs.filter(function (v) { return v['default']; })[0] || vs[0] || null;
+  }
+  // Steps are written for reading; this makes them sound right out loud
+  var SAY_SYM = [['🍲', ' Instant Pot: '], ['💨', ' Air fryer: '], ['🌀', ' Ninja: '], ['🔥', ' On the stove: '], ['🍚', ' Rice cooker: '],
+    ['❄', ' freezer '], ['🧊', ' fridge '], ['🗄', ' cupboard tray '], ['👶', ' for the baby ']];
+  var UNIT = { tsp: ['teaspoon', 'teaspoons'], tbsp: ['tablespoon', 'tablespoons'], kg: ['kilo', 'kilos'], g: ['grams', 'grams'], ml: ['millilitres', 'millilitres'],
+    cm: ['centimetre', 'centimetres'], min: ['minute', 'minutes'], mins: ['minute', 'minutes'], sec: ['second', 'seconds'] };
+  function spoken(t) {
+    t = norm(String(t));
+    SAY_SYM.forEach(function (s) { t = t.split(s[0]).join(s[1]); });
+    t = t.replace(/[⌀-⏿☀-➿‍]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g, ' ')
+      .replace(/\s*→\s*/g, ' into ').replace(/\s*·\s*/g, ', ').replace(/\s\+\s/g, ' and ').replace(/&/g, ' and ')
+      .replace(/(\d)\s*½/g, '$1 and a half').replace(/(\d)\s*¼/g, '$1 and a quarter').replace(/(\d)\s*¾/g, '$1 and three quarters')
+      .replace(/½/g, 'half').replace(/¼/g, 'a quarter').replace(/¾/g, 'three quarters').replace(/⅓/g, 'a third').replace(/⅔/g, 'two thirds')
+      .replace(/(\d)\s*[–-]\s*(\d)/g, '$1 to $2')
+      .replace(/(\d+(?: and (?:a half|a quarter|three quarters))?|half|a quarter|three quarters|a third|two thirds)\s?(tsp|tbsp|kg|g|ml|cm|mins?|sec)\b/g, function (m, n, u) {
+        var w = UNIT[u];
+        return n + ' ' + (/^[a-z]/.test(n) ? (n === 'half' ? 'a ' : 'of a ') + w[0] : n === '1' ? w[0] : w[1]);
+      })
+      .replace(/°\s*F\b/g, ' degrees').replace(/°\s*C\b/g, ' degrees Celsius')
+      .replace(/\bGGP\b/g, 'ginger-garlic paste').replace(/\be\.g\.\s*/g, 'for example ').replace(/\//g, ' or ');
+    return t.replace(/\s+([,.:;])/g, '$1').replace(/([,.:;]){2,}/g, '$1').replace(/\s+/g, ' ').trim();
+  }
+  function say(text, done) {
+    var id = ++VO.sayId, parts = canSpeak() && text ? spoken(text).match(/[^.!?]+[.!?]*/g) || [] : [];
+    if (!parts.length) { VO.speaking = false; resumeRec(); if (done) done(); return; }
+    VO.speaking = true; pauseRec();
+    function go() {
+      if (id !== VO.sayId) return;
+      var v = pickVoice();
+      parts.forEach(function (p, i) {
+        var u = new SpeechSynthesisUtterance(p.trim());
+        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
+        u.rate = state.voice.rate || 1;
+        if (i === parts.length - 1) u.onend = u.onerror = function () { if (id !== VO.sayId) return; VO.speaking = false; resumeRec(); if (done) done(); };
+        speechSynthesis.speak(u);
+      });
+    }
+    if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); setTimeout(go, 80); } else go();
+  }
+  function hush() { VO.sayId++; VO.speaking = false; if (canSpeak()) speechSynthesis.cancel(); resumeRec(); }
+
+  // ----- Listening -----
+  function recLang() { var l = state.voice.lang || navigator.language || ''; return /^en/i.test(l) ? l : 'en-IN'; }
+  function startRec() {
+    if (!SR || VO.rec || VO.speaking || !VO.want) { paintVoice(); return; }
+    var r, got = false;
+    try { r = new SR(); } catch (x) { return; }
+    r.lang = recLang(); r.continuous = VO.mode === 'cook'; r.interimResults = true; r.maxAlternatives = 3;
+    r.onresult = function (e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var res = e.results[i];
+        if (res.isFinal) { var alts = []; for (var k = 0; k < res.length; k++) alts.push(res[k].transcript); got = true; VO.idle = 0; VO.interim = ''; heard(alts); }
+        else interim += res[0].transcript;
+      }
+      if (interim) { VO.interim = interim; paintVoice(); }
+    };
+    r.onerror = function (e) {
+      if (/not-allowed|service-not-allowed|audio-capture|network/.test(e.error)) {
+        VO.want = false;
+        toast(e.error === 'network' ? 'Listening needs an internet connection. Steps can still be read out.' : e.error === 'audio-capture' ? 'No microphone found' :
+          'Allow the microphone for Family Kitchen in your browser settings to talk to it', 6000);
+      }
+    };
+    r.onend = function () {
+      if (VO.rec === r) VO.rec = null;
+      VO.interim = '';
+      if (!got && ++VO.idle > (VO.mode === 'cook' ? 20 : 1)) { VO.want = false; VO.await = null; } // quiet for a while: stop until someone taps 🎙️
+      paintVoice();
+      if (VO.want && !VO.speaking && (VO.mode === 'cook' || VO.await)) setTimeout(startRec, 300);
+    };
+    try { r.start(); VO.rec = r; } catch (x) { VO.rec = null; }
+    paintVoice();
+  }
+  function stopRec() { VO.want = false; VO.await = null; var r = VO.rec; VO.rec = null; if (r) try { r.abort(); } catch (x) {} paintVoice(); }
+  function pauseRec() { var r = VO.rec; VO.rec = null; if (r) try { r.abort(); } catch (x) {} }
+  function resumeRec() {
+    if (VO.want && !VO.rec && (VO.mode === 'cook' || VO.await)) setTimeout(startRec, 250);
+    paintVoice();
+  }
+  function heard(alts) {
+    var said = String(alts[0] || '').trim();
+    if (!said) return;
+    VO.lastYou = said;
+    VO.log.push({ who: 'you', t: said });
+    if (VO.mode === 'groc') { VO.mode = null; VO.want = false; voiceAdd(said.replace(/^\s*(please\s+)?(add|we need|i need|buy)\s+/i, '').replace(/\s+(to|on) (the |my )?(shopping |grocery )?list[.!]?$/i, '')); return; }
+    for (var i = 0; i < alts.length; i++) if (runIntent(alts[i])) return;
+    // While cooking, chatter in the kitchen is ignored; elsewhere, say so
+    if (VO.mode !== 'cook' || VO.await) reply('Sorry, I didn\'t catch that. Say “help” to hear what I can do.');
+    else { VO.last = { you: said, app: '' }; VO.lastYou = ''; paintVoice(); }
+  }
+  function reply(text) {
+    VO.log.push({ who: 'app', t: text });
+    if (VO.mode === 'sheet' && VO.want && !VO.await) VO.await = 'talk';
+    VO.last = { you: VO.lastYou, app: text };
+    VO.lastYou = '';
+    paintVoice();
+    if (!$('vbar') && !$('vChat')) toast(text, 4500);
+    if (VO.mode === 'cook' ? state.voice.read : true) say(text);
+  }
+  function paintVoice() {
+    var bar = $('vbar'), l = VO.last, on = !!VO.rec;
+    if (bar) bar.innerHTML = '<span class="vdot' + (on ? ' on' : '') + '"></span><span class="vtx">' +
+      (VO.interim ? '<i>“' + esc(VO.interim) + '…”</i>' : l && (l.you || l.app) ? (l.you ? '<i>“' + esc(l.you) + '”</i> ' : '') + esc(l.app || '') :
+        on ? 'Listening… say “next”, “repeat” or “timer 5 minutes”' : VO.want ? 'One moment…' : 'Tap 🎙️ to talk') + '</span>';
+    var chat = $('vChat');
+    if (chat) {
+      chat.innerHTML = VO.log.slice(-10).map(function (m) { return '<div class="vmsg ' + m.who + '">' + esc(m.t) + '</div>'; }).join('') +
+        (VO.interim ? '<div class="vmsg you live">' + esc(VO.interim) + '…</div>' : on ? '<div class="vmsg app live">Listening…</div>' : '');
+      chat.scrollTop = chat.scrollHeight;
+    }
+    var mic = $('vMic'); if (mic) mic.classList.toggle('on', on);
+    var gm = document.querySelector('.gmic'); if (gm) gm.classList.toggle('on', on && VO.mode === 'groc');
+  }
+
+  // ----- What you can say -----
+  var NUMW = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14,
+    fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, ninety: 90 };
+  function clean(raw) {
+    var t = ' ' + String(raw).toLowerCase().replace(/[’‘]/g, '\'').replace(/[^a-z0-9'½. ]+/g, ' ').replace(/\.(?!\d)/g, ' ') + ' ';
+    t = t.replace(/ half an hour /g, ' 30 minutes ').replace(/ an hour /g, ' 60 minutes ').replace(/ a minute /g, ' 1 minute ').replace(/ a couple of minutes /g, ' 2 minutes ')
+      .replace(/\b(twenty|thirty|forty|fifty) (one|two|three|four|five|six|seven|eight|nine)\b/g, function (m, a, b) { return String(NUMW[a] + NUMW[b]); })
+      .replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|ninety)\b(?=\s+(?:minutes?|mins?|seconds?|secs?|hours?)\b)/g,
+        function (m) { return String(NUMW[m]); });
+    return t.replace(/\s+/g, ' ').trim()
+      .replace(/^(?:(?:ok|okay|alright|right|so|um|uh|please|hey|hi kitchen|family kitchen|kitchen)\s+)+/, '').replace(/(?:\s+(?:please|thanks|thank you))+$/, '').trim();
+  }
+  function runIntent(raw) {
+    var t = clean(raw);
+    if (!t) return false;
+    var was = VO.await; // a question I asked waits for one answer only
+    for (var i = 0; i < INTENTS.length; i++) {
+      var m = INTENTS[i][0].exec(t);
+      if (!m) continue;
+      VO.await = null; VO.was = was;
+      if (INTENTS[i][1](m, t) !== false) return true;
+      VO.await = was;
+    }
+    return false;
+  }
+  var HELP = 'While cooking, say: next, back, repeat, skip, or what\'s next. For timers: start the timer, set a timer for 5 minutes, how long is left, or stop. ' +
+    'Any time: what\'s for dinner, which boxes for tonight, what\'s in Monday marinade, add milk to the list, slower, faster, or stop listening.';
+  var INTENTS = [
+    [/^(help|what can (i|you) (say|do)|commands|what do i say)$/, function () { reply(HELP); }],
+    [/\b(stop|turn off|switch off) (listening|the mic|the microphone|mic)\b|^(go to sleep|mic off|sleep)$/, function () { reply('Okay, I\'ve stopped listening. Tap 🎙️ when you need me.'); stopRec(); }],
+    [/\b(cancel|stop|clear|delete|remove|end) (the |all |my |that |all the )?(timers?|alarms?)\b/, function (m, t) { stopTimers(false, /\ball\b/.test(t)); }],
+    [/^(stop|quiet|be quiet|hush|silence|shut up|enough|pause|ok stop)$/, function () { if (!stopTimers(true)) hush(); }],
+    [/\b(thank you|thanks|shukriya|jazak ?allah\w*)\b/, function (m) { reply(/jazak/.test(m[0]) ? 'Wa iyyakum! Happy cooking.' : 'You\'re welcome! Happy cooking.'); }],
+    [/^(hi|hello|hey|salaam|salam|as?salamu? ?alaikum|assalam o alaikum|as salamu alaykum)\b/, function (m) {
+      reply(/sal/.test(m[0]) ? 'Wa alaikum assalam! Ask me what\'s for dinner, or say start cooking.' : 'Hello! Ask me what\'s for dinner, or say start cooking.');
+    }],
+    [/\b(slower|slow down|too fast)\b/, function () { setRate(-0.15); reply('Okay, I\'ll speak a bit slower.'); }],
+    [/\b(faster|speed up|too slow)\b/, function () { setRate(0.15); reply('Okay, a bit faster.'); }],
+    // Timers
+    [/(\d+(?:\.\d+)?|½)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b/, function (m, t) {
+      if (!/\b(timer|set|start|remind|alarm|countdown)\b/.test(t) && VO.was !== 'timer' && !/^\d/.test(t)) return false;
+      var n = m[1] === '½' ? 0.5 : +m[1], u = m[2].charAt(0);
+      VO.await = null;
+      voiceTimer(u === 'h' ? n * 60 : u === 's' ? n / 60 : n);
+    }],
+    [/^(start|set|begin)( the| a| my)? timer$|^timer$|^(start|set) (the |a )?timer (please )?$/, function () {
+      var tm = cookOpen() && $('cook').querySelector('.ctext .tm');
+      if (tm) voiceTimer(+tm.getAttribute('data-min'));
+      else { VO.await = 'timer'; reply('For how many minutes?'); }
+    }],
+    [/^\d+(\.\d+)?$/, function (m, t) { if (VO.was !== 'timer') return false; voiceTimer(+t); }],
+    [/\b(how (long|much time)|time left|time is left|timer status|check (the )?timers?)\b/, function () { tellTimers(); }],
+    // Cooking, step by step
+    [/\b(done|finished) cooking\b|^(close|exit|quit|close cook mode|exit cook mode|stop cooking|end cooking)$/, function () {
+      if (!cookOpen()) return false;
+      say('Okay. See you next time.'); closeCook(true);
+    }],
+    [/\bwhat'?s next\b|\bwhat comes (next|after)\b|\bwhat'?s after (this|that)\b/, function () {
+      if (!cookOpen()) return false;
+      var el = cook.list[cook.i + 1];
+      reply(el ? 'Next: ' + el.querySelector('.tx').textContent : 'That\'s the last step.');
+    }],
+    [/^(next|next step|next one|done|i'?m done|done next|finished|got it|ready|tick|tick it|check|complete|go on|continue|move on|okay next|ok next|yes next|next next)$/, function () {
+      if (!cookOpen()) { reply('Say “start cooking”, and I\'ll take you through it step by step.'); return; }
+      cookGo('next', true);
+    }],
+    [/^(skip|skip it|skip this|skip that|skip step|skip this step)$/, function () { if (!cookOpen()) return false; cookGo('skip', true); }],
+    [/^(back|go back|previous|previous step|last step|step back|before that|one back)$/, function () { if (!cookOpen()) return false; cookGo('prev', true); }],
+    [/^(repeat|again|repeat that|repeat it|say (that|it) again|what was that|pardon|come again|read|read it|read that|read it again|read again|one more time|1 more time|sorry what|what)$/, function () {
+      if (!cookOpen()) return false; readStep();
+    }],
+    [/\b(how many|steps left|where am i|which step|what step)\b/, function () {
+      if (!cookOpen()) return false;
+      var left = cook.list.length - cook.i - 1;
+      reply('Step ' + (cook.i + 1) + ' of ' + cook.list.length + '. ' + (left ? left + ' to go.' : 'This is the last one.'));
+    }],
+    [/\b(start|let'?s|begin|time to) (cook(ing)?|make dinner)\b|\bcook mode\b|\bhands free\b/, function () { voiceStartCooking(); }],
+    // About the plan
+    [/\bwhat'?s in (the )?(.+)$/, function (m) { return tellBox(m[2]); }],
+    [/\bboxes\b|\btake out\b/, function () { reply(boxesText()); }],
+    [/\bbreakfast\b/, function (m, t) { tellBreakfast(/\btomorrow\b/.test(t) ? 1 : 0); }],
+    [/\btomorrow\b/, function () { reply(dinnerText(1)); }],
+    [/\b(dinner|tonight|for today|what are we (eating|having)|what'?s cooking|what should (i|we) (cook|make)|menu)\b/, function () { reply(dinnerText(0)); }],
+    // The shopping list
+    [/^(?:add|buy|we need|need|i need|we'?re out of|out of|put|get) (.+?)(?: (?:to|on|in|onto) (?:the |my )?(?:shopping |grocery |groceries )?(?:list|basket))?$/, function (m) { return voiceAdd(m[1]); }]
+  ];
+  function setRate(d) { state.voice.rate = Math.max(0.7, Math.min(1.4, Math.round(((state.voice.rate || 1) + d) * 100) / 100)); save(); }
+  function durText(min) {
+    var s = Math.max(0, Math.round(min * 60)), m = Math.floor(s / 60), r = s % 60;
+    return (m ? m + ' minute' + (m === 1 ? '' : 's') : '') + (m && r ? ' and ' : '') + (r || !m ? r + ' second' + (r === 1 ? '' : 's') : '');
+  }
+  function shortLabel(l) { return spoken(String(l)).split(/[,.:;]/)[0].split(' ').slice(0, 6).join(' '); }
+  function voiceTimer(min) {
+    if (!(min > 0)) { VO.await = 'timer'; reply('For how many minutes?'); return; }
+    addTimer(min, cookOpen() ? cook.list[cook.i].querySelector('.tx').textContent : 'Timer');
+    reply('Timer set for ' + durText(min) + '.');
+  }
+  function stopTimers(onlyRinging, all) {
+    var now = Date.now(), ring = timers.filter(function (t) { return t.end <= now; });
+    var kill = ring.length ? ring : onlyRinging ? [] : all ? timers.slice() : timers.slice(-1);
+    if (!kill.length) { if (!onlyRinging) reply('There are no timers running.'); return false; }
+    kill.forEach(function (t) { timers.splice(timers.indexOf(t), 1); });
+    save(); paintTimers();
+    reply(kill.length > 1 ? 'Timers stopped.' : 'Timer stopped.');
+    return true;
+  }
+  function tellTimers() {
+    if (!timers.length) { reply('No timers are running.'); return; }
+    var now = Date.now();
+    reply(timers.map(function (t) {
+      var left = (t.end - now) / 6e4;
+      return (left <= 0 ? 'Time\'s up' : durText(left) + ' left') + (timers.length > 1 ? ' for ' + shortLabel(t.label) : '');
+    }).join('. ') + '.');
+  }
+  function voiceStartCooking() {
+    if (cookOpen()) { readStep(); return; }
+    var fromSheet = VO.mode === 'sheet';
+    if (fromSheet) closeModal();
+    showTab('today');
+    if (view.browsing || view.ramadan) { resetView(); renderToday(); }
+    if (!$('daycard')) { toast('The weeks are paused for Ramadan, so there are no steps today'); return; }
+    openCook({ voice: true });
+  }
+  // Today, or tomorrow with offset 1
+  function nightAt(offset) {
+    var dn = T + (offset || 0), S = satOf(dn);
+    return { S: S, w: weekAt(S), d: DAYS[dn - S] };
+  }
+  function dinnerText(offset) {
+    var x = nightAt(offset), day = offset ? 'Tomorrow' : 'Today', night = offset ? 'Tomorrow' : 'Tonight';
+    if (x.w.ramadan) return 'The weeks are paused for Ramadan. Cook from the freezer and keep iftar simple.';
+    if (x.w.before) return 'Your plan starts on ' + fmt(satOf(dayNum(state.anchor)), true) + '.';
+    var n = x.w.n, W = PLAN.weeks[n - 1], q = nightPick(n, x.d, x.S).q, t = timeTxt(n, x.d);
+    if (q) return night + ' is ' + q.name + ', a quick pick that takes about ' + q.min + ' minutes. No boxes needed.';
+    if (x.d === 'sun') return day + ' is a night off: ' + strip(W.days.sun.title.split(' · ').slice(1).join(' ')) + '.';
+    if (x.d === 'sat') return day + ' is prep day, and dinner is ' + strip(W.glance.sat.dinner) + '.';
+    return night + ' is ' + strip(W.glance[x.d].dinner) + (t ? ', about ' + t : '') + '. Ask “which boxes” to hear what to take out.';
+  }
+  function boxesText() {
+    var x = nightAt(0);
+    if (!x.w.n) return 'There are no boxes this week.';
+    if (x.d === 'sat') return 'Today is prep day. You fill ' + boxList(x.w.n, x.S).length + ' boxes and pudis. Tap 📦 Boxes on today\'s card to see them all.';
+    if (nightPick(x.w.n, x.d, x.S).q) return 'Tonight is a quick pick, so there are no boxes to take out.';
+    var list = boxesOf(x.w.n).filter(function (b) { return b.who === DAY_LONG[x.d]; });
+    if (!list.length) return 'There are no boxes for today.';
+    return 'Take out: ' + list.map(function (b) { return b.name + ' from the ' + WHERE[b.where].toLowerCase(); }).join(', ') + '.';
+  }
+  function tellBox(q) {
+    var x = nightAt(0); if (!x.w.n) return false;
+    q = q.replace(/\b(box|container|the)\b/g, ' ').replace(/\s+/g, ' ').trim();
+    var all = boxesOf(x.w.n), b = all.filter(function (y) { return y.name.toLowerCase() === q; })[0] ||
+      all.filter(function (y) { var nm = y.name.toLowerCase(); return q.length > 3 && (nm.indexOf(q) >= 0 || q.indexOf(nm) >= 0); })[0];
+    if (!b) return false;
+    var line = boxLines(x.w.n, b)[0];
+    reply(b.name + ' goes in the ' + WHERE[b.where].toLowerCase() + '.' + (line ? ' On Saturday: ' + strip(line) : ''));
+  }
+  function tellBreakfast(offset) {
+    var x = nightAt(offset), r = PLAN.bf.rot[x.d];
+    reply((offset ? 'Tomorrow' : 'Today') + '\'s breakfast: ' + (r ? strip(r.what) : 'any favourite') + '.');
+  }
+  function listText(a) { return a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0]; }
+  function voiceAdd(text) {
+    if (/^(help|a hand|a timer|timer|more time|a break)$/.test(String(text).trim())) return false;
+    if (!isPlus() && !PLUS.GROCERIES_FREE) { reply('The shopping list is part of Kitchen Plus.'); return; }
+    var items = [];
+    String(text).toLowerCase().split(/\s*(?:,|\band\b|&|\bplus\b)\s*/).forEach(function (x) {
+      x = x.replace(/[.!?]+$/, '').replace(/^(some|a|an|the|more)\s+/, '').trim();
+      if (x.length < 2) return;
+      // "milk eggs bread" is three things; "green chillies" and "chicken thighs" stay together
+      var w = x.split(' ');
+      if (w.length > 1 && !/\d/.test(x) && w.every(function (y) { return y.length > 2 && EMOJI.some(function (e) { return e[0].test(y); }); })) items = items.concat(w);
+      else items.push(x);
+    });
+    if (!items.length) return false;
+    items.forEach(function (x) { addGrocery(cap(x)); });
+    reply('Added ' + listText(items) + ' to your shopping list.');
+  }
+  // 🎙️ at the top: ask anything, see the conversation
+  function openVoiceSheet() {
+    if (!voiceOK()) { openPaywall('voice'); return; }
+    unlockSpeech(); unlockAudio();
+    var chips = ['What\'s for dinner?', 'Which boxes for tonight?', 'What\'s for dinner tomorrow?', 'Set a timer for 10 minutes', 'Add milk to the list', 'Start cooking', 'Help'];
+    openModal('<h3>🎙️ Talk to Family Kitchen</h3><p class="small">' + (SR ? 'Tap the mic and ask, or tap a question.' : 'This browser can\'t listen, but it can answer out loud. Tap a question.') + '</p>' +
+      '<div class="vchat" id="vChat"></div>' + (SR ? '<button class="vmic" id="vMic" aria-label="Talk">🎙️</button>' : '') +
+      '<div class="vchips">' + chips.map(function (c) { return '<button data-say="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') + '</div>');
+    VO.mode = 'sheet'; VO.log = []; VO.await = null; VO.idle = 0;
+    if (SR) $('vMic').addEventListener('click', function () { unlockSpeech(); if (VO.rec) stopRec(); else { hush(); VO.idle = 0; VO.want = true; VO.await = 'talk'; startRec(); } });
+    each($('modal').querySelectorAll('[data-say]'), function (b) {
+      b.addEventListener('click', function () {
+        unlockSpeech();
+        var t = b.getAttribute('data-say');
+        VO.lastYou = t; VO.log.push({ who: 'you', t: t });
+        if (!runIntent(t)) reply('Sorry, I didn\'t catch that.');
+      });
+    });
+    paintVoice();
+    if (SR) { VO.want = true; VO.await = 'talk'; startRec(); }
+  }
+  function voiceSheetClosed() { if (VO.mode === 'sheet') { VO.mode = null; stopRec(); hush(); } }
+  // 🎙️ on the shopping list: say what you need
+  function listenGroceries() {
+    if (!voiceOK()) { openPaywall('voice'); return; }
+    if (!SR) { toast('This browser can\'t listen. Try Chrome on Android or a computer.'); return; }
+    unlockSpeech();
+    if (VO.rec && VO.mode === 'groc') { stopRec(); VO.mode = null; return; }
+    hush(); VO.mode = 'groc'; VO.want = true; VO.await = null; VO.idle = 0;
+    toast('Listening… say what you need, like “onions, tomatoes and milk”', 4000);
+    startRec();
+  }
+  if (canSpeak() && 'onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = function () { if (!$('view-more').hidden) renderVoicePanel(); };
+  function voiceHelpHTML() {
+    var g = [['While cooking', ['next', 'back', 'repeat', 'skip', 'what\'s next', 'how many steps left', 'close']],
+      ['Timers', ['start the timer', 'set a timer for 5 minutes', 'how long is left', 'stop the timer']],
+      ['Any time', ['what\'s for dinner', 'what\'s for dinner tomorrow', 'which boxes', 'what\'s in Monday marinade', 'what\'s for breakfast']],
+      ['Shopping list', ['add milk to the list', 'we need onions and tomatoes']],
+      ['Voice', ['slower', 'faster', 'stop', 'stop listening', 'help']]];
+    return g.map(function (x) { return '<h4>' + x[0] + '</h4><div class="vchips left">' + x[1].map(function (c) { return '<span>“' + esc(c) + '”</span>'; }).join('') + '</div>'; }).join('');
+  }
+  function renderVoicePanel() {
+    var v = state.voice, voices = englishVoices(), box = $('voicePanel');
+    if (!box) return;
+    box.innerHTML = '<h3 style="margin-top:0">🎙️ Voice' + (voiceOK() ? '' : ' <span class="lock">👑</span>') + '</h3>' +
+      '<p class="small">For messy hands: steps are read out loud, and you can say “next”, “repeat” or “timer 10 minutes”. Tap 🎙️ at the top to ask what\'s for dinner or add to your shopping list.</p>' +
+      (canSpeak() ? '<label>Read steps out loud</label><div class="seg" data-vs="read"><button data-v="1">On</button><button data-v="0">Off</button></div>' : '') +
+      (SR ? '<label>Listen while cooking</label><div class="seg" data-vs="listen"><button data-v="1">On</button><button data-v="0">Off</button></div>'
+        : '<p class="small">This browser can\'t listen. Chrome on Android or a computer can.</p>') +
+      (canSpeak() ? '<label>Speed</label><div class="seg" data-vs="rate"><button data-v="0.85">Slow</button><button data-v="1">Normal</button><button data-v="1.15">Fast</button></div>' : '') +
+      (voices.length > 1 ? '<label>Voice</label><select id="vVoice"><option value="">Automatic</option>' + voices.map(function (x) {
+        return '<option value="' + esc(x.name) + '"' + (x.name === v.name ? ' selected' : '') + '>' + esc(x.name) + ' (' + esc(x.lang) + ')</option>';
+      }).join('') + '</select>' : '') +
+      '<div class="row" style="margin-top:12px">' + (canSpeak() ? '<button class="btn secondary" data-vp="try">▶️ Try it</button>' : '') + '<button class="btn secondary" data-vp="help">What can I say?</button></div>';
+    var on = { read: v.asked ? (v.read ? '1' : '0') : '1', listen: v.asked ? (v.listen ? '1' : '0') : '1', rate: String(v.rate || 1) };
+    each(box.querySelectorAll('[data-vs]'), function (s) {
+      var k = s.getAttribute('data-vs');
+      each(s.querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-v') === on[k]); });
+    });
+    var sel = $('vVoice');
+    if (sel) sel.addEventListener('change', function () { state.voice.name = sel.value; save(); unlockSpeech(); say('Hello! This is how I sound.'); });
+  }
+  $('voicePanel').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (!voiceOK()) { openPaywall('voice'); return; }
+    unlockSpeech();
+    var s = b.closest('[data-vs]');
+    if (s) {
+      var k = s.getAttribute('data-vs'), val = b.getAttribute('data-v');
+      if (k === 'rate') state.voice.rate = +val; else { state.voice[k] = val === '1'; state.voice.asked = true; }
+      save(); renderVoicePanel();
+      if (k === 'rate') say('This is my new speed.');
+      return;
+    }
+    if (b.getAttribute('data-vp') === 'try') say('Assalamu alaikum! I\'ll read each step out loud. Say next when you\'re ready, or repeat to hear it again.');
+    if (b.getAttribute('data-vp') === 'help') openModal('<h3>🎙️ What you can say</h3><p class="small">Say it naturally. “Okay”, “please” and “kitchen” are fine too.</p>' + voiceHelpHTML());
+  });
+  $('micBtn').addEventListener('click', openVoiceSheet);
+  if (!canSpeak() && !SR) $('micBtn').hidden = true;
 
   // ---------- Keep the screen on while cooking ----------
   var lock = null, wantAwake = false, noWake = false;
@@ -2282,7 +2771,7 @@ button.box{cursor:pointer}
     var h = '<div class="panel"><div class="row" style="align-items:flex-start"><div style="flex:1"><h2>🛒 Groceries</h2><p class="small" style="margin:0">' +
       (list.length ? left + ' to buy · ' + (list.length - left) + ' in the basket' : 'Your shopping list, right next to your meal plan.') + '</p></div>' +
       (list.length ? '<button class="btn sm" data-g="share" style="flex:none">📤 Share</button>' : '') + '</div>' +
-      '<form class="gadd" id="gForm" style="margin-top:12px"><input id="gIn" placeholder="Add an item, e.g. 2 kg onions" autocomplete="off" enterkeyhint="done"><button class="btn" type="submit" aria-label="Add">+</button></form>' +
+      '<form class="gadd" id="gForm" style="margin-top:12px"><input id="gIn" placeholder="Add an item, e.g. 2 kg onions" autocomplete="off" enterkeyhint="done">' + (SR ? '<button type="button" class="btn secondary gmic" data-g="mic" aria-label="Say what you need">🎙️</button>' : '') + '<button class="btn" type="submit" aria-label="Add">+</button></form>' +
       '<div class="quick">' + STAPLES.filter(function (s) { return !list.some(function (x) { return x.t.toLowerCase() === s.toLowerCase(); }); }).slice(0, 12)
         .map(function (s) { return '<button data-q="' + esc(s) + '">+ ' + emojiFor(s) + ' ' + esc(s) + '</button>'; }).join('') + '</div></div>';
     if (list.length) {
@@ -2312,6 +2801,7 @@ button.box{cursor:pointer}
   $('view-groceries').addEventListener('click', function (e) {
     var g = e.target.closest('[data-g]'), q = e.target.closest('[data-q]'), it = e.target.closest('.gi');
     if (g && g.getAttribute('data-g') === 'unlock') { openPaywall('grocery'); return; }
+    if (g && g.getAttribute('data-g') === 'mic') { listenGroceries(); return; }
     if (!isPlus() && !PLUS.GROCERIES_FREE) return;
     if (q) { addGrocery(q.getAttribute('data-q')); return; }
     if (it) {
@@ -2340,6 +2830,7 @@ button.box{cursor:pointer}
       '<li>🔥 Finish every step in a day to grow your cooking streak.</li>' +
       '<li>🍽️ My menu: answer a few questions in the Menu tab, then change any night to something your family likes.</li>' +
       '<li>👆 Tap a symbol in a step to see what it means.</li>' +
+      '<li>🎙️ Messy hands? Tap 🎙️ Hands-free and say “next”, “repeat” or “timer 10 minutes”.</li>' +
       '<li>👆 Swipe left or right on a day to move between days.</li>' +
       '<li>⚙️ Wrong week? Fix it in Week settings.</li></ul></div>';
     $('startBody').innerHTML = '<h4 style="margin-top:4px">The rules</h4>' + rulesHTML() + '<h4>What the symbols mean</h4>' + legendHTML(state.prefs.kit) + how +
@@ -2349,7 +2840,7 @@ button.box{cursor:pointer}
       ' <button class="linkbtn" data-act="settings">Change dates</button></div>' : '<div class="note">No Ramadan pause is set. <button class="linkbtn" data-act="settings">Set dates</button></div>') +
       blocksHTML(PLAN.ramadan.blocks, null);
     $('swapBody').innerHTML = blocksHTML(PLAN.swaps, null);
-    paintPlus(); applyTheme();
+    paintPlus(); applyTheme(); renderVoicePanel();
   }
   $('view-more').addEventListener('click', function (e) {
     var a = e.target.closest('[data-act]'); if (a && a.getAttribute('data-act') === 'settings') openSettings();
@@ -2398,7 +2889,7 @@ button.box{cursor:pointer}
     $('modal').innerHTML = '<button class="x" data-close="1" aria-label="Close">✕</button>' + html;
     $('overlay').classList.add('show');
   }
-  function closeModal() { $('overlay').classList.remove('show'); $('modal').innerHTML = ''; }
+  function closeModal() { voiceSheetClosed(); $('overlay').classList.remove('show'); $('modal').innerHTML = ''; }
   $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay') || e.target.closest('[data-close]')) closeModal(); });
   function confirmBox(msg, yes, fn) {
     openModal('<h3>Are you sure?</h3><p>' + esc(msg) + '</p><div class="row" style="margin-top:14px"><button class="btn secondary" data-close="1">Cancel</button><button class="btn" id="cfYes">' + esc(yes) + '</button></div>');
