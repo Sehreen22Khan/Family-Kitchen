@@ -12,6 +12,9 @@ The meal plan stays **free for everyone**. That keeps people sharing the app on 
 | 🎨 Five extra colour themes | Fun and personal |
 | 🖨 Print the week | For the fridge |
 
+**My menu** (the questions, the suggested menu and changing meals) is free. It is the reason people come back every week, and that is what sells Plus.
+If you'd rather make *changing meals* a Plus feature, set `PICK_MEALS: true` in the `KITCHEN PLUS` settings. The questions and the suggested menu stay free.
+
 Free users still see the Plus buttons, marked with 👑. Tapping one opens the upgrade screen with that feature at the top.
 Everyone gets a **7-day free trial** once.
 

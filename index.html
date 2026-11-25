@@ -4,7 +4,7 @@
   1. Never change the storage name: kitchen-data-v1
   2. Only ADD new saved fields. Never rename or remove existing ones
      (anchor, anchorWeek, pauseFrom, pauseTo, ticks, start, done,
-      plus, groceries, notes, favs, theme, timersRun).
+      plus, groceries, notes, favs, theme, timersRun, prefs, menus).
   3. Never reset or overwrite saved data when the page loads.
   4. Never rename the GitHub username or the repo.
 -->
@@ -365,6 +365,82 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 #cook .cnav .back{flex:0 0 76px}
 #cook .cnav .next{flex:1}
 
+/* ===== My menu ===== */
+.sech{margin:20px 4px 10px;font-size:17px}
+.invite{border:1.5px solid var(--brand);background:linear-gradient(150deg,var(--card) 40%,var(--brand-soft))}
+.invite .row{margin-top:12px}
+.menu{padding:14px 14px 8px}
+.menu .mh{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.seg.sm{flex:none;padding:3px;border-radius:12px}
+.seg.sm button{padding:7px 11px;font-size:13px}
+.mrow{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:none;color:inherit;font:inherit;padding:10px 2px;cursor:pointer}
+.mrow:first-child,.mh+.mrow{border-top:0}
+.mrow .md{flex:none;width:34px;text-align:center;font-size:11.5px;font-weight:800;color:var(--muted);line-height:1.15}
+.mrow .md b{display:block;font-size:17px;color:var(--text);font-weight:900}
+.mrow.today .md b{color:var(--brand-text)}
+.mrow .mi{flex:none;width:40px;height:40px;border-radius:13px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:21px}
+.mrow .mn{flex:1;min-width:0;font-weight:800;line-height:1.3}
+.mrow .mn small{display:block;font-weight:700;font-size:12.5px;color:var(--muted);margin-top:2px}
+.mrow .mc{flex:none;font-size:12.5px;font-weight:900;color:var(--brand-text);background:var(--brand-soft);border-radius:999px;padding:6px 11px}
+.tag{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:2px 7px;margin-left:6px;vertical-align:2px;background:var(--brand-soft);color:var(--brand-text)}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px 12px;margin:0 0 8px;font:inherit;color:inherit;cursor:pointer;transition:transform .12s}
+.opt:active{transform:scale(.98)}
+.opt.on{border-color:var(--brand);background:var(--brand-soft)}
+.opt.dim{opacity:.62}
+.opt .oe{font-size:24px;flex:none;width:34px;text-align:center}
+.opt .ot{flex:1;min-width:0;font-weight:800;line-height:1.3}
+.opt small{display:block;color:var(--muted);font-weight:700;font-size:12.5px;margin-top:2px}
+.opt .warn{color:#C2410C}
+.opt .ok{flex:none;width:26px;height:26px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+details.more{margin-top:6px}
+details.more>summary{list-style:none;display:block;text-align:center;margin-bottom:8px}
+details.more>summary::-webkit-details-marker{display:none}
+s.off{opacity:.5;text-decoration-thickness:1.5px;text-decoration-color:var(--muted)}
+.steps>:first-child{border-top:0}
+.skipln{display:flex;gap:12px;align-items:flex-start;padding:11px 2px;border-top:1px solid var(--line)}
+.skipln .bx,.skipln .tx{opacity:.45}
+.skipln .tx{flex:1;min-width:0;line-height:1.55;text-decoration:line-through;text-decoration-color:var(--muted)}
+.sk{flex:none;font-size:10.5px;font-weight:900;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:3px 8px;background:var(--card2);color:var(--muted);border:1px solid var(--line);margin-top:2px}
+
+/* ===== Questions ===== */
+#quiz{position:fixed;inset:0;z-index:75;background:var(--bg);display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 12px) 18px calc(env(safe-area-inset-bottom) + 16px);overflow-y:auto;overflow-x:hidden}
+#quiz.show{display:flex;animation:fade .2s}
+#quiz::before{content:"";position:fixed;left:-30%;right:-30%;top:-25vh;height:60vh;background:radial-gradient(closest-side,var(--brand-soft),transparent);pointer-events:none}
+#quiz>*{position:relative;width:100%;max-width:520px;margin-left:auto;margin-right:auto}
+.qtop{display:flex;align-items:center;gap:12px;flex:none}
+.qtop .x{border:0;background:var(--card2);color:var(--text);width:40px;height:40px;border-radius:50%;font-size:16px;cursor:pointer;flex:none}
+.qbar{flex:1;height:8px;border-radius:999px;background:var(--card2);overflow:hidden}
+.qbar span{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:999px;transition:width .35s}
+.qskip{border:0;background:none;color:var(--muted);font:inherit;font-weight:800;cursor:pointer;padding:8px 4px;flex:none}
+.qbody{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;padding:20px 0;animation:qin .3s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes qin{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+.qbody h2{font-size:27px;line-height:1.2;margin:6px 0 8px;letter-spacing:-.02em}
+.qn{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-text)}
+.qopts{display:grid;gap:10px;margin-top:18px}
+.qopts.two{grid-template-columns:1fr 1fr}
+.qo{display:flex;align-items:center;gap:14px;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:20px;padding:14px 16px;font:inherit;color:inherit;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,border-color .15s,background .15s}
+.qo:active{transform:scale(.97)}
+.qo .qe{font-size:30px;line-height:1;flex:none;width:40px;text-align:center}
+.qo .ql{flex:1;min-width:0}
+.qo b{display:block;font-size:17px;font-weight:900}
+.qo small{display:block;color:var(--muted);font-size:13.5px;font-weight:700;margin-top:2px}
+.qo.on{border-color:var(--brand);background:var(--brand-soft)}
+.qo .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line2);flex:none;display:flex;align-items:center;justify-content:center}
+.qo.on .ck{background:var(--brand);border-color:var(--brand)}
+.qo.on .ck::after{content:"";width:11px;height:6px;border:solid #fff;border-width:0 0 2.5px 2.5px;transform:translateY(-1px) rotate(-45deg)}
+.qopts.two .qo{padding:12px;gap:8px}
+.qopts.two .qo .qe{font-size:18px;width:auto}
+.qopts.two .qo b{font-size:14.5px}
+.qnav{display:flex;gap:10px;flex:none}
+.qnav.col{flex-direction:column;align-items:stretch}
+.qnav .btn{padding:16px;font-size:16.5px;border-radius:18px}
+.qnav .back{flex:0 0 76px}
+.qnav .next{flex:1}
+.qhero{text-align:center}
+.qhero .big{font-size:78px;line-height:1.1;animation:bob 2.4s ease-in-out infinite}
+.qpot{font-size:84px;line-height:1.1;animation:stir 0.9s ease-in-out infinite}
+@keyframes stir{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.08)}}
+
 /* ===== Confetti ===== */
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
 #confetti i{position:absolute;top:-40px;font-style:normal;font-size:24px;animation:fall linear forwards}
@@ -402,6 +478,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 <section id="view-today"></section>
 
 <section id="view-weeks" hidden>
+  <div id="menuBox"></div>
   <div class="search" style="margin-bottom:14px"><input id="q" type="search" placeholder="Find a dish, e.g. biryani" autocomplete="off"></div>
   <div class="panel" id="hits" hidden></div>
   <div id="favBox"></div>
@@ -466,7 +543,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 
 <nav class="tabs"><div class="in">
   <button data-tab="today" class="on"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 14a4 4 0 0 1-.6-7.95A5 5 0 0 1 12 3a5 5 0 0 1 6.6 3.05A4 4 0 0 1 18 14v6H6z"/><path d="M6 17h12"/></svg></span>Today</button>
-  <button data-tab="weeks"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>Weeks</button>
+  <button data-tab="weeks"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 3v18M4.5 3v5a2.5 2.5 0 0 0 5 0V3M17 21V3c-2.2 1.2-3.5 3.6-3.5 7v4H17"/></svg></span>Menu</button>
   <button data-tab="breakfast"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg></span>Breakfast</button>
   <button data-tab="groceries"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg></span>Groceries</button>
   <button data-tab="more"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg></span>More</button>
@@ -474,6 +551,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 
 <div id="timers"></div>
 <div id="cook"></div>
+<div id="quiz" role="dialog" aria-label="Plan your menu"></div>
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="confetti"></div>
@@ -494,6 +572,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   var PLUS = {
     STORE_ID: '',          // your Lemon Squeezy store ID (numbers only), so keys from other stores don't work
     TRIAL_DAYS: 7,         // free trial length; 0 turns the trial off
+    PICK_MEALS: false,     // true: changing meals in My menu needs Plus (the questions and suggested menu stay free)
     PLANS: [
       { id: 'yearly',   name: 'Yearly',   sub: 'Best value · 2 months free', price: '$19.99', per: '/year',  link: '', save: 'SAVE 44%' },
       { id: 'monthly',  name: 'Monthly',  sub: 'Cancel any time',            price: '$2.99',  per: '/month', link: '' },
@@ -521,7 +600,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   // (Sat 6 Feb) until the first Saturday after Eid (Sat 13 Mar), which is Week 4.
   var DEFAULTS = { anchor: '2027-01-16', anchorWeek: 1, pauseFrom: '2027-02-06', pauseTo: '2027-03-13', ticks: {} };
   // Fields added later (only ever added, never renamed)
-  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [] };
+  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [], prefs: {}, menus: {} };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -530,10 +609,11 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   function each(list, fn) { Array.prototype.forEach.call(list, fn); }
 
   // ---------- Saved data ----------
+  var hadData = false; // false on someone's very first visit
   var state = load();
   function load() {
     var s = null;
-    try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) { s = null; }
+    try { var raw = localStorage.getItem(KEY); hadData = raw != null; s = JSON.parse(raw); } catch (e) { s = null; }
     if (!s || typeof s !== 'object') s = {};
     for (var k in DEFAULTS) if (!(k in s)) s[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
     if (!s.ticks || typeof s.ticks !== 'object') s.ticks = {};
@@ -543,6 +623,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     return s;
   }
   function save() {
+    MCACHE = {};
     try { localStorage.setItem(KEY, JSON.stringify(state)); }
     catch (e) { toast('Could not save on this phone'); }
   }
@@ -618,6 +699,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     themes: ['🎨', 'Colour themes', 'Make the app yours with five extra colour themes.'],
     print: ['🖨️', 'Print the week', 'A clean, fridge-ready page of the whole week’s plan.']
   };
+  if (PLUS.PICK_MEALS) FEATURES.menu = ['🍽️', 'Pick every meal', 'Swap any night for a dish your family loves.'];
   function need(feature, fn) { if (isPlus()) fn(); else openPaywall(feature); }
 
   function api(path, body) {
@@ -766,8 +848,9 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
       return pre + '<button class="tm" data-min="' + a + '">' + a + (b ? '–' + b : '') + ' ' + unit + '</button>';
     });
   }
-  // ctx: null for plain reading, or { day, seen, done } to make steps tickable
-  function blocksHTML(blocks, ctx) {
+  // ctx: null for plain reading, or { day, seen, done } to make steps tickable.
+  // skip: { n, off } crosses out Saturday prep for nights swapped in My menu.
+  function blocksHTML(blocks, ctx, skip) {
     var h = '';
     blocks.forEach(function (b) {
       if (b.t === 'h') h += '<h4>' + b.h + '</h4>';
@@ -776,37 +859,146 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
       else if (b.t === 'tonight') h += ctx ? tickHTML(b.h, '', ctx, 'div', ' tonight') : '<p class="tonight">' + b.h + '</p>';
       else if (b.t === 'table') h += tableHTML(b.rows);
       else if (b.t === 'ol' || b.t === 'ul') {
-        if (ctx) {
-          h += '<' + b.t + ' class="steps">' + b.items.map(function (it, i) { return tickHTML(it, b.t === 'ol' ? i + 1 : '', ctx, 'li', ''); }).join('') + '</' + b.t + '>';
-        } else {
-          h += '<' + b.t + ' class="plain">' + b.items.map(function (it) { return '<li>' + it + '</li>'; }).join('') + '</' + b.t + '>';
-        }
+        h += '<' + b.t + ' class="' + (ctx ? 'steps' : 'plain') + '">' + b.items.map(function (it, i) {
+          var sk = skip ? skipInfo(skip, it) : null;
+          if (sk && sk.skip) {
+            if (ctx) ctx.seen[tickId(it, ctx)] = 2; // keeps later ids the same; not counted
+            return '<li class="skipln"><span class="bx">–</span><div class="tx">' + it + '</div><span class="sk">Swapped</span></li>';
+          }
+          var shown = sk ? sk.html : it;
+          return ctx ? tickHTML(it, b.t === 'ol' ? i + 1 : '', ctx, 'li', '', shown) : '<li>' + shown + '</li>';
+        }).join('') + '</' + b.t + '>';
       }
     });
     return h;
   }
-  function tickHTML(html, num, ctx, tag, extra) {
+  function tickId(html, ctx) {
     // The id is made from the original text, so ticks saved by older versions still match
     var base = ctx.day + ':' + hash(strip(html)), id = base, k = 2;
     while (ctx.seen[id]) id = base + '~' + (k++);
     ctx.seen[id] = 1;
-    var on = !!ctx.done[id];
-    return '<' + tag + ' class="tk' + extra + (on ? ' done' : '') + '" data-id="' + id + '" role="checkbox" aria-checked="' + on + '" tabindex="0">' +
-      '<span class="bx">' + num + '</span><div class="tx">' + timerize(html) + '</div></' + tag + '>';
+    return id;
   }
-  function dayBlocks(W, d) {
-    var D = W.days[d];
-    if (d !== 'sat') return D.blocks;
-    var out = D.intro.slice();
-    D.groups.forEach(function (g) { out = out.concat(g.blocks); });
-    return out;
+  function tickHTML(html, num, ctx, tag, extra, shown) {
+    var id = tickId(html, ctx), on = !!ctx.done[id];
+    return '<' + tag + ' class="tk' + extra + (on ? ' done' : '') + '" data-id="' + id + '" role="checkbox" aria-checked="' + on + '" tabindex="0">' +
+      '<span class="bx">' + num + '</span><div class="tx">' + timerize(shown || html) + '</div></' + tag + '>';
+  }
+
+  // ----- My menu: crossing out Saturday prep for nights that were swapped -----
+  var PREP_NIGHTS = ['sat', 'mon', 'tue', 'wed', 'thu', 'fri'];
+  var NIGHT_WORD = { sat: "[Tt]onight(?:'s)?", mon: "Monday(?!'s breakfast)", tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday' };
+  // Containers some weeks name without their day
+  var ALIAS = { 1: { wed: ['chutney'] }, 3: { mon: ['butter gravy'], thu: ['do pyaza'] }, 4: { wed: ['chutney'] }, 5: { fri: ['dalcha', 'kaddu'] } };
+  var OTHER_USE = /\b(breakfast|Breakfast|Sunday|Week \d|samosas?|shammi|premix|garnish|baby)\b/;
+  var RE_CACHE = {};
+  function nightRe(n, list) {
+    var k = n + ':' + list.join(',');
+    if (RE_CACHE[k]) return RE_CACHE[k];
+    var w = [];
+    list.forEach(function (d) { w.push(NIGHT_WORD[d]); ((ALIAS[n] || {})[d] || []).forEach(function (a) { w.push(a); }); });
+    return (RE_CACHE[k] = w.length ? new RegExp('\\b(?:' + w.join('|') + ')\\b') : /$^/);
+  }
+  // null: keep as is · { skip: true }: only for swapped nights · { html }: some parts crossed out
+  function skipInfo(skip, html) {
+    var t = strip(html), hit = 0, keep = OTHER_USE.test(t);
+    PREP_NIGHTS.forEach(function (d) { if (nightRe(skip.n, [d]).test(t)) { if (skip.off[d]) hit++; else keep = true; } });
+    if (!hit) return null;
+    if (!keep) return { skip: true };
+    var out = strikeOff(skip, html);
+    if (!strip(out.replace(/<s class="off">[\s\S]*?<\/s>/g, '')).replace(/[\s.,;:·→()]/g, '')) return { skip: true };
+    return out === html ? null : { html: out };
+  }
+  function strikeOff(skip, html) {
+    var reOff = nightRe(skip.n, PREP_NIGHTS.filter(function (d) { return skip.off[d]; }));
+    var reOn = nightRe(skip.n, PREP_NIGHTS.filter(function (d) { return !skip.off[d]; }));
+    function bad(x) { x = strip(x); return reOff.test(x) && !reOn.test(x) && !OTHER_USE.test(x); }
+    function s(x) { return '<s class="off">' + x + '</s>'; }
+    return html.split(/(\.\s+)/).map(function (sen, i) {
+      if (i % 2) return sen;
+      // "Monday marinade: …", "Tonight: …" and label lines belong to that night alone
+      if (strip(sen).replace(/^[^A-Za-z]+/, '').search(reOff) === 0 && !reOn.test(strip(sen))) return s(sen);
+      return sen.split(/(;\s+)/).map(function (cl, j) {
+        if (j % 2) return cl;
+        var a = cl.lastIndexOf('→'), c = cl.indexOf(': '), pre, rest;
+        if (a >= 0) { pre = cl.slice(0, a + 1); rest = cl.slice(a + 1); }
+        else if (cl.indexOf(' · ') >= 0) { pre = c >= 0 ? cl.slice(0, c + 2) : ''; rest = c >= 0 ? cl.slice(c + 2) : cl; }
+        else return cl;
+        var all = 0, hit = 0, parts = rest.split(/( · )/).map(function (p, x) {
+          if (x % 2) return p;
+          all++;
+          if (bad(p)) { hit++; return s(p); }
+          return p;
+        });
+        return all && hit === all ? s(cl) : pre + parts.join('');
+      }).join('');
+    }).join('');
+  }
+
+  // ----- The steps for one day -----
+  // Saturday's prep stations, or a night's dinner. With My menu on, a swapped night shows its quick pick.
+  function nightPick(n, d, S) {
+    var M = menuFor(n, S), x = M && M.picks[d];
+    return { M: M, q: x && x !== 'plan' ? QMAP[x] || null : null };
+  }
+  function swappedNights(M) {
+    var off = {}, k = 0;
+    if (M) PREP_NIGHTS.forEach(function (d) { if (M.picks[d] !== 'plan') { off[d] = 1; k++; } });
+    return k ? off : null;
+  }
+  var OATS = '🌙 Tonight: fill 2 jars of overnight oats for breakfast.';
+  // A night's blocks. The 🌙 Tonight reminder is for tomorrow's dinner, so it goes if tomorrow was swapped.
+  function nightBlocks(n, d, M, onlyTonight) {
+    var D = PLAN.weeks[n - 1].days[d], next = DAYS[DAYS.indexOf(d) + 1];
+    var nextOff = !!(M && next && next !== 'sun' && M.picks[next] !== 'plan');
+    return D.blocks.filter(function (b) { return !onlyTonight || b.t === 'tonight'; }).map(function (b) {
+      if (b.t !== 'tonight' || !nextOff) return b;
+      return /overnight oats/.test(b.h) ? { t: 'tonight', h: OATS } : null;
+    }).filter(Boolean);
+  }
+  function quickHTML(q, ctx) {
+    return (q.note ? '<p class="tip">⏰ ' + q.note + '</p>' : '') + blocksHTML([{ t: 'ol', items: q.steps }], ctx);
+  }
+  var GRAVY = null;
+  function gravyHelp() {
+    if (GRAVY === null) {
+      GRAVY = '';
+      PLAN.weeks[0].days.sat.groups.forEach(function (g) { g.blocks.forEach(function (b) { (b.items || []).forEach(function (it) { if (/^<b>General gravy<\/b>/.test(it)) GRAVY = it; }); }); });
+    }
+    return GRAVY ? '<details class="bf"><summary><span>📝 <b>No frozen gravy from Week 1?</b></span><span class="more">Make it ▾</span></summary><div class="rb"><p>🌀 Puree 5 tomatoes, then: ' + GRAVY + '</p></div></details>' : '';
+  }
+  function stepsHTML(n, W, d, S, ctx, ui) {
+    var np = nightPick(n, d, S), M = np.M, q = np.q, D = W.days[d], h = '';
+    if (d === 'sat') {
+      var off = swappedNights(M), skip = off ? { n: n, off: off } : null, firstOpen = -1;
+      h += blocksHTML(D.intro, ctx);
+      if (W.tip) h += '<p class="tip">💡 ' + W.tip + '</p>';
+      if (skip) h += '<div class="note">✨ <b>My menu:</b> crossed-out prep is for nights you swapped, so skip it.</div>';
+      D.groups.forEach(function (gr, gi) {
+        var tonight = /Tonight/.test(gr.title), title = gr.title, body;
+        if (tonight && q) { title = '🍳 Tonight · ' + esc(q.name) + ' (' + q.min + ' min)'; body = quickHTML(q, ctx); }
+        else body = blocksHTML(gr.blocks, ctx, tonight ? null : skip);
+        var key = n + ':' + gi, open = openGroups[key];
+        if (open === undefined) {
+          var all = (body.match(/class="tk[ "]/g) || []).length, done = (body.match(/class="tk[^"]* done"/g) || []).length;
+          open = firstOpen < 0 && all > done;
+          if (open) firstOpen = gi;
+        }
+        h += '<details class="grp" data-g="' + key + '"' + (open || !ui ? ' open' : '') + '><summary><span class="gt">' + title + '</span><span class="gc"></span></summary><div class="gb">' + body + '</div></details>';
+      });
+      return h;
+    }
+    if (q) return h + quickHTML(q, ctx) + blocksHTML(d === 'sun' ? D.blocks : nightBlocks(n, d, M, true), ctx);
+    if (n === 4 && d === 'mon') h += gravyHelp();
+    if (M && n === 4 && d === 'thu' && M.picks.tue !== 'plan') h += '<div class="note">📝 <b>Heads-up:</b> this dinner uses Tuesday\'s dal, and you swapped Tuesday. Cook a small pot of any dal, or serve the chattani with rice and salad.</div>';
+    return h + blocksHTML(nightBlocks(n, d, M, false), ctx);
   }
   // How many steps a day has, and how many are ticked
   function dayStats(n, d, S) {
     var ctx = { day: d, seen: {}, done: bag(n, S) };
-    blocksHTML(dayBlocks(PLAN.weeks[n - 1], d), ctx);
+    stepsHTML(n, PLAN.weeks[n - 1], d, S, ctx, false);
     var all = 0, done = 0;
-    for (var id in ctx.seen) { all++; if (ctx.done[id]) done++; }
+    for (var id in ctx.seen) if (ctx.seen[id] === 1) { all++; if (ctx.done[id]) done++; }
     return { all: all, done: done };
   }
   // Days in a row with every step ticked (today counts once it is finished)
@@ -821,6 +1013,204 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
       else if (dn !== T) break;
     }
     return count;
+  }
+
+  // ---------- My menu ----------
+  // Quick picks need no Saturday prep. The first ones are the recipes in 🔁 Swaps; the rest are new.
+  // p: c chicken · m mutton · b beef · k keema (mutton or beef) · f fish · e eggs · v veggie
+  // s: spice, 1 mild to 4 very hot · at: the nights it suits best · act: hands-on minutes, when less than min
+  var QUICK = [
+    { id: 'chana-palak', src: 'Chana palak', name: 'Chana palak + rice', e: '🥬', min: 20, p: 'v', s: 2, at: 'mon tue thu' },
+    { id: 'khichdi', src: 'Vegetable khichdi', name: 'Vegetable khichdi', e: '🍲', min: 25, p: 'v', s: 1, at: 'tue thu sun' },
+    { id: 'egg-bhurji', src: 'Egg bhurji', name: 'Egg bhurji + roti', e: '🍳', min: 10, p: 'e', s: 2, at: 'wed sun' },
+    { id: 'chicken-soup', src: 'Chicken and vegetable soup', name: 'Chicken and vegetable soup', e: '🥣', min: 30, p: 'c', s: 1, at: 'thu sun' },
+    { id: 'rajma', src: 'Rajma', name: 'Rajma + rice', e: '🫘', min: 20, p: 'v', s: 2, at: 'tue thu' },
+    { id: 'lemon-pepper', src: 'Lemon-pepper chicken', name: 'Lemon-pepper chicken and vegetables', e: '🍋', min: 25, p: 'c', s: 1, at: 'wed sat' },
+    { id: 'crispy-chilli', src: 'Crispy chilli chicken', name: 'Crispy chilli chicken', e: '🌶️', min: 30, p: 'c', s: 3, at: 'sat wed', note: 'Marinate the chicken 1 hour before you start.' },
+    { id: 'bangalori', src: 'Bangalori pepper chicken', name: 'Bangalori pepper chicken', e: '🍗', min: 20, p: 'c', s: 3, at: 'wed mon' },
+    { id: 'masoor', src: 'Masoor dal in a pot', name: 'Masoor dal + rice', e: '🍛', min: 25, p: 'v', s: 2, at: 'tue' },
+    { id: 'besan', src: 'Besan', name: 'Besan + roti', e: '🥘', min: 15, p: 'v', s: 3, at: 'tue thu' },
+    { id: 'arvi', src: 'Arvi ka sherva', name: 'Arvi ka sherva + rice', e: '🥔', min: 40, p: 'v', s: 2, at: 'thu tue' },
+    { id: 'karahi', name: 'Chicken karahi + naan', e: '🍗', min: 30, p: 'c', s: 2, at: 'mon fri', steps: [
+      '🔥 3 tbsp oil on high: 750 g chicken (curry cut), 1 tbsp GGP and 1 tsp salt, 8–10 min, until the water dries.',
+      'Add 4 chopped tomatoes, 1 tsp Kashmiri chilli, ½ tsp haldi, 1 tsp crushed coriander seeds and 1 tsp crushed black pepper. Cover and cook on medium 12–15 min, stirring now and then, until the tomatoes melt and the oil separates.',
+      'Add 2 slit green chillies, a thumb of ginger in thin strips and ¼ cup curd; toss on high 2–3 min.',
+      'Finish with ½ tsp garam masala, a pinch of kasuri methi and kothimir. Serve with naan or roti.'] },
+    { id: 'keema-matar', name: 'Keema matar + roti', e: '🍖', min: 25, p: 'k', s: 2, at: 'thu mon', steps: [
+      '🍲 Sauté: 2 tbsp oil, 1 tsp cumin, 1 bay leaf and 1 chopped onion until soft, 3–4 min.',
+      'Add 1 tbsp GGP, then 500 g mutton or beef keema; break it up and cook until it changes colour, 5 min.',
+      'Add 2 chopped tomatoes, 1 tsp salt, 1 tsp chilli, ½ tsp haldi, 1½ tsp coriander powder and ½ cup water. Pressure Cook 8 min, quick release.',
+      'Stir in 1 cup frozen peas and ½ tsp garam masala, and Sauté until dry, 3–4 min. Add kothimir; serve with roti or paratha.'] },
+    { id: 'mutton-curry', name: 'Pressure-cooker mutton curry', e: '🐑', min: 45, act: 25, p: 'm', s: 2, at: 'thu fri', steps: [
+      '🍲 Sauté: 3 tbsp oil, 1 bay leaf, 4 cloves, 4 elaichi and 1-inch cinnamon, 30 sec. Add 2 sliced onions until golden, 8–10 min.',
+      'Add 750 g bone-in mutton and 1½ tbsp GGP; brown 5 min. Add 2 chopped tomatoes, ¼ cup curd, 1½ tsp Kashmiri chilli, ½ tsp haldi, 2 tsp coriander powder and 1½ tsp salt, 3 min.',
+      'Add 1 cup water and scrape the bottom. Pressure Cook 25 min, natural release 10.',
+      'Stir in ½ tsp garam masala and kothimir, and Sauté a little to thicken if you like. Serve with rice or roti.'] },
+    { id: 'masala-fish', name: 'Air-fryer masala fish + rice', e: '🐟', min: 20, p: 'f', s: 2, at: 'wed sat', steps: [
+      'Rub 500 g firm white fish (or salmon) pieces with 1 tsp GGP, 1 tsp Kashmiri chilli, ¼ tsp haldi, ½ tsp coriander powder, ½ tsp salt, the juice of ½ lemon and 1 tbsp oil. Rest 10 min.',
+      '💨 Oil the basket. 400°F, 8–10 min, turning once, until the fish flakes.',
+      'Serve with lemon wedges, rice or roti, and a quick kachumber.'] },
+    { id: 'egg-curry', name: 'Egg curry + rice', e: '🥚', min: 25, p: 'e', s: 2, at: 'wed thu', steps: [
+      '🔥 Boil 6 eggs 9 min, cool them in cold water and peel. Make a few shallow slits in each.',
+      '🔥 2 tbsp oil, 1 tsp cumin and 1 chopped onion until golden, 6–8 min. Add 1 tsp GGP, 30 sec.',
+      'Add 2 puréed tomatoes, 1 tsp salt, 1 tsp chilli, ½ tsp haldi and 1 tsp coriander powder; cook until the oil separates, 6–8 min. Add 1 cup water and simmer 3 min.',
+      'Add the eggs and ½ tsp garam masala, and simmer 3–4 min. Finish with kothimir; serve with rice or roti.'] },
+    { id: 'chana-masala', name: 'Chana masala + rice', e: '🧆', min: 20, p: 'v', s: 2, at: 'mon thu', steps: [
+      '🍲 Sauté: 2 tbsp oil, 1 tsp cumin, 1 bay leaf and 1 chopped onion until golden, 5 min. Add 1 tbsp GGP, 30 sec.',
+      'Add 2 puréed tomatoes, 1 tsp salt, 1 tsp chilli, ½ tsp haldi, 1½ tsp coriander powder and 1 tsp chana masala (or garam masala), 3 min.',
+      'Add 2 cans chickpeas (rinsed) and 1 cup water. Pressure Cook 5 min, quick release.',
+      'Mash a few chickpeas to thicken. Add a squeeze of lemon, sliced onion and kothimir; serve with rice or roti.'] },
+    { id: 'aloo-gobi', name: 'Aloo gobi + roti', e: '🥦', min: 25, p: 'v', s: 1, at: 'mon thu', steps: [
+      '🔥 3 tbsp oil, 1 tsp cumin and 1 chopped onion, 3 min. Add 1 tsp GGP and 1 chopped tomato, 2 min.',
+      'Add 2 potatoes (cubed), 1 small cauliflower (in florets), 1 tsp salt, ½ tsp haldi, ½ tsp chilli and 1 tsp coriander powder; toss well.',
+      'Cover and cook on low 12–15 min, stirring now and then, until tender. Uncover for the last 2–3 min to brown.',
+      'Finish with ½ tsp garam masala, ½ tsp amchur and kothimir. Serve with roti and raita.'] },
+    { id: 'veg-pulao', name: 'Vegetable pulao + raita', e: '🍚', min: 25, p: 'v', s: 1, at: 'fri sun tue', steps: [
+      '🍲 Sauté: 2 tbsp ghee, 1 tsp cumin, 1 bay leaf, 4 cloves, 3 elaichi and 1-inch cinnamon, 30 sec. Add 1 sliced onion until light golden, 4–5 min.',
+      'Add 1 tsp GGP, 1 slit green chilli and 2 cups frozen mixed vegetables, 2 min.',
+      'Add 1½ cups basmati (rinsed and soaked 20 min), 1½ cups water and 1½ tsp salt, and scrape the bottom. Pressure Cook 4 min, natural release 10.',
+      'Fluff gently and add mint or kothimir. Serve with raita and papad.'] },
+    { id: 'paneer-bhurji', name: 'Paneer bhurji + paratha', e: '🧀', min: 15, p: 'v', s: 1, at: 'wed sun', steps: [
+      '🔥 1 tbsp butter and 1 tbsp oil: 1 tsp cumin, 1 chopped onion and 1 chopped green chilli, 3 min. Add 1 tsp GGP, 30 sec.',
+      '🎲 Add 1 capsicum and 2 tomatoes, diced, with ½ tsp salt, ¼ tsp haldi, ½ tsp chilli and ½ tsp garam masala; cook until soft, 4–5 min.',
+      'Crumble in 250 g paneer with 2 tbsp milk and toss 2–3 min. Add kothimir and a pinch of kasuri methi; serve with paratha, roti or toast.'] },
+    { id: 'chicken-pasta', name: 'Creamy chicken pasta', e: '🍝', min: 25, p: 'c', s: 1, at: 'sat sun wed', steps: [
+      '🔥 Boil 300 g penne in salted water as the pack says; keep ½ cup of the water.',
+      '🔥 1 tbsp oil and 1 tbsp butter: 400 g boneless chicken in small pieces with ½ tsp salt, ½ tsp pepper and 1 tsp mixed herbs, 6–8 min, until cooked.',
+      'Add 3 crushed garlic cloves and 1 cup sliced mushrooms or peppers, 2 min. Add 1 cup cream (or milk with 1 tbsp flour), ½ cup grated cheese and a pinch of chilli flakes; simmer 2 min.',
+      'Toss in the pasta with a splash of the pasta water until creamy. Finish with black pepper and kothimir or parsley.'] },
+    { id: 'fajita-wraps', name: 'Chicken fajita wraps', e: '🌯', min: 20, p: 'c', s: 1, at: 'sat sun', steps: [
+      'Slice 500 g boneless chicken thinly and toss with 1 tbsp oil, 1 tsp Kashmiri chilli (or paprika), 1 tsp cumin powder, 1 tsp GGP, ½ tsp salt and the juice of ½ lime.',
+      '🔥 1 tbsp oil on the highest heat: the chicken, 5–6 min. Add 1 sliced onion and 2 sliced peppers, 3 min more, until charred at the edges.',
+      'Warm 6 tortillas or parathas. Fill with the chicken, lettuce, yogurt or sour cream, salsa and grated cheese, and roll up.'] }
+  ];
+  // Every dinner in the 8 weeks, in the order sat mon tue wed thu fri: protein letter, then spice
+  var DISH = { 1: 'b1 c1 v2 c1 m2 v1', 2: 'c2 c1 v2 c3 b2 m1', 3: 'c3 v1 v3 c2 m2 c2', 4: 'c2 c2 v2 f2 b2 m2',
+    5: 'f1 c3 v2 c3 k2 m2', 6: 'c2 c3 v2 c1 m4 k1', 7: 'c2 c2 v1 c2 m2 c1', 8: 'c3 c2 v2 e2 m2 c1' };
+  var PE = { c: '🍗', m: '🐑', b: '🐄', k: '🍖', f: '🐟', e: '🥚', v: '🥬' };
+  var PN = { c: 'chicken', m: 'mutton', b: 'beef', k: 'keema', f: 'fish', e: 'eggs', v: 'veggie' };
+  var AVOID = [['bhendi', 'Okra (bhendi)', 'bhendi|okra'], ['baingan', 'Brinjal (baingan)', 'baingan|brinjal|eggplant|aubergine'],
+    ['paneer', 'Paneer', 'paneer'], ['mushroom', 'Mushrooms', 'mushrooms?'], ['prawn', 'Prawns', 'prawns?|shrimps?'],
+    ['nuts', 'Nuts', 'nuts?|kaju|cashews?|almonds?|badam|pista|pistachios?|peanuts?|walnuts?|tarbooz'], ['coconut', 'Coconut', 'coconut']];
+  var QMAP = {};
+  QUICK = QUICK.filter(function (q) {
+    if (q.src) {
+      var b = PLAN.swaps.filter(function (x) { return x.t === 'p' && strip(x.h).indexOf(q.src) === 0; })[0];
+      if (!b) return false; // that recipe was taken out of the plan
+      var body = b.h.replace(/^<b>[^<]*<\/b>\s*(\([^)]*\))?\s*:?\s*/, '');
+      body = body.charAt(0).toUpperCase() + body.slice(1);
+      q.steps = body.split(/\.\s+(?=[^a-z])/).map(function (x, i, a) { return x + (i < a.length - 1 ? '.' : ''); });
+    }
+    q.text = (q.name + ' ' + q.steps.map(strip).join(' ')).toLowerCase();
+    QMAP[q.id] = q;
+    return true;
+  });
+  var PD = {};
+  function planDish(n, d) {
+    var k = n + ':' + d;
+    if (PD[k]) return PD[k];
+    var W = PLAN.weeks[n - 1], code = DISH[n].split(' ')[PREP_NIGHTS.indexOf(d)] || 'v1', re = nightRe(n, [d]);
+    var t = ' ' + strip(W.glance[d].dinner) + ' ', bl = d === 'sat' ? [] : W.days[d].blocks.filter(function (b) { return b.t !== 'tonight'; });
+    W.days.sat.groups.forEach(function (g) {
+      if (/Tonight/.test(g.title)) { if (d === 'sat') bl = bl.concat(g.blocks); return; }
+      g.blocks.forEach(function (b) {
+        (b.items || []).forEach(function (it) {
+          var st = strip(it);
+          if (!re.test(st)) return;
+          // A line shared by several nights only counts the sentences about this one
+          if (PREP_NIGHTS.filter(function (x) { return nightRe(n, [x]).test(st); }).length === 1) t += st + ' ';
+          else st.split(/\.\s+/).forEach(function (sen) { if (re.test(sen)) t += sen + ' '; });
+        });
+      });
+    });
+    bl.forEach(function (b) { t += (b.items ? b.items.map(strip).join(' ') : b.rows ? '' : strip(b.h)) + ' '; });
+    var x = /(\d+)(½)?\s*(min|hour)/.exec(timeTxt(n, d)), min = 0;
+    if (x) min = x[3] === 'min' ? +x[1] : (+x[1] + (x[2] ? 0.5 : 0)) * 60;
+    return (PD[k] = { p: code.charAt(0), s: +code.charAt(1), min: min, act: /hands-off/.test(timeTxt(n, d, true)) ? Math.round(min / 2) : 0, text: t.toLowerCase(), name: strip(W.glance[d].dinner) });
+  }
+  function timeTxt(n, d, full) {
+    if (d === 'sat' || d === 'sun') return '';
+    var t = PLAN.weeks[n - 1].days[d].title.split(' · ').slice(2).join(' · ');
+    return full ? t : t.split(',')[0];
+  }
+  function prefsFull() {
+    var p = state.prefs || {}, m = p.meats || {};
+    return { meats: { c: m.c !== false, m: m.m !== false, b: m.b !== false, f: m.f !== false, e: m.e !== false },
+      veg: p.veg || 1, spice: p.spice || 2, time: p.time || 0, sunday: p.sunday || 'takeaway', avoid: p.avoid || [] };
+  }
+  var AV_CACHE = {};
+  function avoidRe(P) {
+    var k = P.avoid.join('|');
+    if (!k) return null;
+    if (!AV_CACHE[k]) AV_CACHE[k] = new RegExp('\\b(?:' + P.avoid.map(function (a) {
+      var hit = AVOID.filter(function (x) { return x[0] === a; })[0];
+      return hit ? hit[2] : a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('|') + ')\\b', 'i');
+    return AV_CACHE[k];
+  }
+  // Why a dish doesn't suit the family's answers ('' when it does)
+  function whyNot(o, d, P) {
+    if (o.p !== 'v' && !(o.p === 'k' ? P.meats.m || P.meats.b : P.meats[o.p])) return 'Has ' + PN[o.p];
+    if (!P.meats.e && /\beggs?\b/.test(o.text)) return 'Has egg';
+    var re = avoidRe(P), m = re && re.exec(o.text);
+    if (m) return 'Has ' + m[0].toLowerCase();
+    if (o.s >= [0, 3, 4, 9][P.spice]) return o.s >= 4 ? 'Very hot' : 'Spicy';
+    if (P.time && /mon|tue|wed|thu|fri/.test(d) && (o.act || o.min) > P.time) return 'Takes ' + o.min + ' min';
+    return '';
+  }
+  function rng(seed) {
+    var a = parseInt(seed, 36) || 1;
+    return function () { a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  function meatFree(o) { return o.p === 'v' || o.p === 'e'; }
+  function bestQuick(d, P, used, seed, veg) {
+    // Each night rolls its own dice, so changing one night leaves the others alone
+    var rnd = rng(hash(seed + ':' + d)), best = null, top = -1;
+    QUICK.forEach(function (q) {
+      if (used[q.id] || whyNot(q, d, P) || (veg && !meatFree(q))) return;
+      var sc = (q.at.indexOf(d) >= 0 ? 3 : 0) + rnd() * 2.5 + (P.spice === 3 && q.s >= 3 ? 1 : 0) + (P.spice === 1 && q.s === 1 ? 1 : 0);
+      if (sc > top) { top = sc; best = q; }
+    });
+    return best;
+  }
+  function menuOn() { return !!(state.prefs.on && state.prefs.done); }
+  // What we'd suggest for plan week n from the family's answers alone
+  function autoMenu(n, P, seed) {
+    var picks = {}, used = {}, open = [];
+    PREP_NIGHTS.forEach(function (d) { if (!whyNot(planDish(n, d), d, P)) picks[d] = 'plan'; else open.push(d); });
+    function isFree(d) { var x = picks[d]; return !!x && meatFree(x === 'plan' ? planDish(n, d) : QMAP[x]); }
+    var have = PREP_NIGHTS.filter(isFree).length, want = P.veg;
+    open.forEach(function (d) {
+      var q = bestQuick(d, P, used, seed, have < want) || bestQuick(d, P, used, seed, false);
+      if (q) { picks[d] = q.id; used[q.id] = 1; if (meatFree(q)) have++; } else picks[d] = 'plan';
+    });
+    ['mon', 'thu', 'wed', 'sat', 'fri'].forEach(function (d) {
+      if (have >= want || picks[d] !== 'plan' || isFree(d)) return;
+      var q = bestQuick(d, P, used, seed, true);
+      if (q) { picks[d] = q.id; used[q.id] = 1; have++; }
+    });
+    var sq = P.sunday === 'cook' ? bestQuick('sun', P, used, seed, false) : null;
+    picks.sun = sq ? sq.id : 'plan';
+    return picks;
+  }
+  // The menu for plan week n starting on Saturday S: picks[night] is 'plan' or a quick pick id.
+  // Nights the family picked themselves win; the rest follow their answers.
+  var MCACHE = {};
+  function menuFor(n, S) {
+    if (!menuOn() || S == null || !n || paused(S)) return null;
+    var key = isoOf(S), mk = key + ':' + n;
+    if (MCACHE[mk]) return MCACHE[mk];
+    var rec = state.menus[key] || {}, man = rec.picks || {}, P = prefsFull(), seed = key + ':' + (rec.seed || 0);
+    var picks = autoMenu(n, P, seed), mine = {}, used = {};
+    DAYS.forEach(function (d) { var m = man[d]; if (m === 'plan' || QMAP[m]) { picks[d] = m; mine[d] = 1; if (m !== 'plan') used[m] = 1; } });
+    // Don't suggest a quick pick the family already put on another night
+    DAYS.forEach(function (d) {
+      if (mine[d] || picks[d] === 'plan' || !used[picks[d]]) return;
+      var u = {}; DAYS.forEach(function (x) { if (x !== d && picks[x] !== 'plan') u[picks[x]] = 1; });
+      var q = bestQuick(d, P, u, seed, false);
+      picks[d] = q ? q.id : 'plan';
+    });
+    return (MCACHE[mk] = { n: n, S: S, picks: picks, man: mine });
   }
 
   // ---------- Breakfast ----------
@@ -849,9 +1239,15 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   function renderToday() {
     var el = $('view-today');
     if ((!view.browsing && cur.ramadan) || view.ramadan) { el.innerHTML = ramadanToday(); return; }
-    var n = view.w, W = PLAN.weeks[n - 1], S = instanceStart(n);
+    var n = view.w, W = PLAN.weeks[n - 1], S = instanceStart(n), M = menuFor(n, S);
     var isCur = S != null && S === curSat && !!cur.n;
     var h = '';
+
+    if (!state.prefs.done && !state.prefs.skipped) {
+      h += '<div class="panel invite"><div class="kicker">✨ New</div><h3 style="margin:6px 0 4px">🍽️ Make the plan fit your family</h3>' +
+        '<p class="small">Answer a few quick questions and get a weekly menu made for you. Change any meal you like.</p>' +
+        '<div class="row"><button class="btn" data-act="quiz">Let\'s do it</button><button class="btn secondary" data-act="noquiz">Not now</button></div></div>';
+    }
 
     if (!view.browsing && cur.before) {
       var a = satOf(dayNum(state.anchor)), soon = nextSat(T);
@@ -863,18 +1259,25 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 
     var kicker = isCur ? 'This week' : (S == null ? 'Later' : (S === curSat + 7 ? 'Next week' : (S < curSat ? '' : 'From ' + fmt(S, true))));
     if (!view.browsing && cur.before) kicker = 'Preview';
+    if (M) kicker = (kicker ? kicker + ' · ' : '') + '✨ My menu';
     var stats = '';
     if (isCur) {
       var wk = 0; DAYS.forEach(function (d) { wk += dayStats(n, d, S).done; });
       var sk = streak();
       stats = '<div class="stats"><span class="stat">🔥 ' + sk + '-day streak</span><span class="stat">✅ ' + wk + ' steps done this week</span></div>';
     }
+    var lead = W.lead;
+    if (M) {
+      var sw = DAYS.filter(function (d) { return M.picks[d] !== 'plan'; }).length;
+      lead = sw ? sw + ' night' + (sw > 1 ? 's' : '') + ' changed to suit your family. Tap 🔁 Change meal on any day to pick something else.'
+        : 'This week\'s plan already suits your family. ' + W.lead;
+    }
     h += '<div class="hero"><div class="wkhead">' +
       '<button class="navbtn" data-act="prevW" aria-label="Previous week">‹</button>' +
       '<div class="mid"><div class="kicker">' + esc(kicker) + '</div><div class="num">Week ' + n + '</div>' +
       (S != null ? '<div class="small">' + fmt(S, true) + ' – ' + fmt(S + 6, true) + '</div>' : '') + '</div>' +
       '<button class="navbtn" data-act="nextW" aria-label="Next week">›</button></div>' +
-      '<p class="lead">' + W.lead + '</p>' + stats + '</div>';
+      '<p class="lead">' + lead + '</p>' + stats + '</div>';
 
     if (view.browsing) {
       h += '<div class="browsing"><span>Looking at Week ' + n + '.</span><button class="linkbtn" data-act="home">Back to ' + (cur.ramadan ? 'Ramadan' : cur.before ? 'the preview' : 'this week') + '</button>' +
@@ -896,13 +1299,15 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 
   function dayHTML(n, W, d, S) {
     var D = W.days[d], g = W.glance[d] || {}, i = DAYS.indexOf(d);
-    var dn = S != null ? S + i : null;
+    var dn = S != null ? S + i : null, np = nightPick(n, d, S), q = np.q, M = np.M;
     var kicker = DAY_LONG[d] + (dn != null ? ' · ' + fmt(dn) : '') + (dn === T ? ' · Today' : '');
     var parts = D.title.split(' · '), title, time = '', pills = [];
     function add(icon, html) { if (html && strip(html).trim() && strip(html).trim() !== '—') pills.push('<span class="pill">' + icon + ' ' + html + '</span>'); }
     if (d === 'sat') {
       title = '🛒 Prep day'; time = parts.slice(1).join(' · ');
-      add('⏱', esc(time)); add('🍳 Tonight:', g.dinner); add('🥗', g.salad); add('🧃', g.juice);
+      add('⏱', esc(time)); add('🍳 Tonight:', q ? esc(q.name) : g.dinner); if (!q) add('🥗', g.salad); add('🧃', g.juice);
+    } else if (q) {
+      title = q.e + ' ' + q.name; add('⏱', q.min + ' min'); add('✨', 'Quick pick, no prep'); add('🧃', g.juice);
     } else if (d === 'sun') {
       title = parts.slice(1).join(' · '); add('🧃', g.juice);
     } else {
@@ -911,12 +1316,13 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     }
     if ('wakeLock' in navigator && !noWake) pills.push('<button class="pill awake' + (wantAwake ? ' on' : '') + '" data-act="awake">' + (wantAwake ? '🔆 Screen stays on' : '🔅 Keep screen on') + '</button>');
 
-    var plus = isPlus(), lk = plus ? '' : ' <span class="lock">👑</span>', fk = 'w' + n + ':' + d, fav = !!state.favs[fk];
+    var plus = isPlus(), lk = plus ? '' : ' <span class="lock">👑</span>', fk = q ? 'q:' + q.id : 'w' + n + ':' + d, fav = !!state.favs[fk];
     var ctx = { day: d, seen: {}, done: bag(n, S) };
     var h = '<div class="dayhead"><div class="t"><div class="kicker">' + esc(kicker) + '</div><div class="dish">' + esc(title) + '</div></div>' +
       '<div class="ring" id="ring" hidden><svg viewBox="0 0 58 58"><circle class="tr" cx="29" cy="29" r="25"/><circle class="fg" cx="29" cy="29" r="25" stroke-dasharray="157.1" stroke-dashoffset="157.1"/></svg><span></span></div></div>' +
       '<div class="pills">' + pills.join('') + '</div>' +
       '<div class="actions"><button class="act main" data-act="cook">👩‍🍳 Cook mode' + lk + '</button>' +
+      (M ? '<button class="act" data-act="change">🔁 Change meal' + (PLUS.PICK_MEALS ? lk : '') + '</button>' : '') +
       '<button class="act fav' + (fav ? ' on' : '') + '" data-act="fav">' + (fav ? '❤️ Loved' : '🤍 Love it') + lk + '</button>' +
       '<button class="act" data-act="note">📝 Note' + lk + '</button>' +
       '<button class="act" data-act="print">🖨️ Print week' + lk + '</button></div>';
@@ -924,24 +1330,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     h += bfLine(d);
     var J = W.juice && W.juice[d];
     if (J) h += '<div class="note">🧃 <b>' + esc(J.name) + ' juice</b> (today\'s pack): ' + esc(J.what) + '.</div>';
-    if (d === 'sat') {
-      h += blocksHTML(D.intro, ctx);
-      if (W.tip) h += '<p class="tip">💡 ' + W.tip + '</p>';
-      var firstOpen = -1;
-      D.groups.forEach(function (gr, gi) {
-        var body = blocksHTML(gr.blocks, ctx);
-        var key = n + ':' + gi, open = openGroups[key];
-        if (open === undefined) {
-          var tmp = document.createElement('div'); tmp.innerHTML = body;
-          var all = tmp.querySelectorAll('.tk').length, done = tmp.querySelectorAll('.tk.done').length;
-          open = firstOpen < 0 && all > done;
-          if (open) firstOpen = gi;
-        }
-        h += '<details class="grp" data-g="' + key + '"' + (open ? ' open' : '') + '><summary><span class="gt">' + gr.title + '</span><span class="gc"></span></summary><div class="gb">' + body + '</div></details>';
-      });
-    } else {
-      h += blocksHTML(D.blocks, ctx);
-    }
+    h += stepsHTML(n, W, d, S, ctx, true);
     h += '<div class="foot"><button class="linkbtn small" data-act="clearWeek" style="color:var(--muted)">Clear this week\'s ticks</button></div>';
     return h;
   }
@@ -1006,6 +1395,9 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     else if (a === 'fav') need('fav', toggleFav);
     else if (a === 'note') need('fav', editNote);
     else if (a === 'print') need('print', printWeek);
+    else if (a === 'change') pickMeal(view.w, instanceStart(view.w), view.d);
+    else if (a === 'quiz') openQuiz();
+    else if (a === 'noquiz') { state.prefs.skipped = Date.now(); save(); renderToday(); renderMenu(); toast('No problem! Plan your menu any time from 🍽️ Menu.'); }
   });
   $('view-today').addEventListener('keydown', function (e) {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('tk')) { e.preventDefault(); toggleTick(e.target); }
@@ -1073,13 +1465,18 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   }, { passive: true });
 
   // ---------- Favourites and notes (Plus) ----------
+  // A quick pick keeps its heart and note wherever it lands; plan dinners keep theirs by week and day
+  function dishKey() {
+    var q = nightPick(view.w, view.d, instanceStart(view.w)).q;
+    return q ? 'q:' + q.id : 'w' + view.w + ':' + view.d;
+  }
   function toggleFav() {
-    var k = 'w' + view.w + ':' + view.d;
+    var k = dishKey();
     if (state.favs[k]) delete state.favs[k]; else { state.favs[k] = 1; toast('Saved to favourites ❤️'); }
     save(); renderToday(); renderWeeks();
   }
   function editNote() {
-    var k = 'w' + view.w + ':' + view.d;
+    var k = dishKey();
     openModal('<h3>📝 Note for ' + esc(title()) + '</h3><p class="small">Your tweaks, what the kids said, what to buy next time. It stays on this phone.</p>' +
       '<textarea id="noteTx" placeholder="e.g. Less chilli for the kids, double the naan">' + esc(state.notes[k] || '') + '</textarea>' +
       '<div class="row" style="margin-top:12px"><button class="btn secondary" data-close="1">Cancel</button><button class="btn" id="noteSave">Save note</button></div>');
@@ -1092,16 +1489,17 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
 
   // ---------- Print the week (Plus) ----------
   function printWeek() {
-    var n = view.w, W = PLAN.weeks[n - 1], S = instanceStart(n);
-    var h = '<h1>Family Kitchen · Week ' + n + '</h1>' + (S != null ? '<div>' + fmt(S, true) + ' – ' + fmt(S + 6, true) + '</div>' : '') + '<p>' + W.lead + '</p>' +
-      tableHTML([['Day', 'Dinner', 'Salad', 'Juice']].concat(DAYS.map(function (d) { var g = W.glance[d] || {}; return [DAY_LONG[d], g.dinner || '', g.salad || '', g.juice || '']; })));
+    var n = view.w, W = PLAN.weeks[n - 1], S = instanceStart(n), M = menuFor(n, S);
+    var rows = [['Day', 'Dinner', 'Salad', 'Juice']].concat(DAYS.map(function (d) {
+      var g = W.glance[d] || {}, q = nightPick(n, d, S).q;
+      return [DAY_LONG[d], q ? esc(q.name) : g.dinner || '', q ? '' : g.salad || '', g.juice || ''];
+    }));
+    var h = '<h1>Family Kitchen · Week ' + n + (M ? ' · My menu' : '') + '</h1>' + (S != null ? '<div>' + fmt(S, true) + ' – ' + fmt(S + 6, true) + '</div>' : '') +
+      '<p>' + W.lead + '</p>' + tableHTML(rows);
     DAYS.forEach(function (d) {
-      var D = W.days[d];
-      h += '<div class="day"><h2>' + DAY_LONG[d] + ' · ' + esc(D.title.split(' · ').slice(1).join(' · ')) + '</h2>';
-      if (d === 'sat') { h += blocksHTML(D.intro, null); D.groups.forEach(function (g) { h += '<h4>' + g.title + '</h4>' + blocksHTML(g.blocks, null); }); }
-      else h += blocksHTML(D.blocks, null);
-      var nt = state.notes['w' + n + ':' + d]; if (nt) h += '<p><b>Note:</b> ' + esc(nt) + '</p>';
-      h += '</div>';
+      var q = nightPick(n, d, S).q, nt = state.notes[q ? 'q:' + q.id : 'w' + n + ':' + d];
+      h += '<div class="day"><h2>' + DAY_LONG[d] + ' · ' + (q ? (d === 'sat' ? 'Prep day · tonight: ' : '') + esc(q.name) : esc(W.days[d].title.split(' · ').slice(1).join(' · '))) + '</h2>' + stepsHTML(n, W, d, S, null, false) +
+        (nt ? '<p><b>Note:</b> ' + esc(nt) + '</p>' : '') + '</div>';
     });
     $('print').innerHTML = h;
     setTimeout(function () { window.print(); }, 50);
@@ -1235,9 +1633,9 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     if (b) { b.classList.toggle('on', wantAwake); b.textContent = wantAwake ? '🔆 Screen stays on' : '🔅 Keep screen on'; }
   }
 
-  // ---------- Weeks ----------
+  // ---------- Menu tab: My menu and the 8 weeks ----------
   function renderWeeks() {
-    var p = pauseRange(), h = '', ramShown = false;
+    var p = pauseRange(), h = '<h3 class="sech">📅 All 8 weeks</h3>', ramShown = false;
     var ramCard = function () {
       var t = p ? fmt(p.a, true) + ' – ' + (p.b === Infinity ? 'Eid' : fmt(p.b - 1, true)) : '';
       return '<button class="wcard ram" data-ram="1"><div class="top"><span class="wnum">🌙</span><strong>Ramadan and Eid</strong>' + (p && cur.ramadan ? '<span class="badge">Now</span>' : '') + '<span class="when">' + t + '</span></div>' +
@@ -1258,12 +1656,14 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
     if (!ramShown) h += ramCard();
     $('weekList').innerHTML = h;
     // favourites strip
-    var favs = Object.keys(state.favs).filter(function (k) { return /^w[1-8]:(sat|sun|mon|tue|wed|thu|fri)$/.test(k); });
+    var favs = Object.keys(state.favs).filter(function (k) { return /^w[1-8]:(sat|sun|mon|tue|wed|thu|fri)$/.test(k) || (k.indexOf('q:') === 0 && QMAP[k.slice(2)]); });
     $('favBox').innerHTML = favs.length ? '<div class="panel" style="padding:12px 14px"><div class="kicker" style="margin-bottom:8px">❤️ Your favourites</div><div class="favs">' +
       favs.map(function (k) {
+        if (k.indexOf('q:') === 0) { var q = QMAP[k.slice(2)]; return '<button class="fv" data-fq="' + q.id + '"><div class="w">✨ Quick pick</div><div class="l">' + q.e + ' ' + esc(q.name) + '</div></button>'; }
         var n = +k.charAt(1), d = k.split(':')[1], g = PLAN.weeks[n - 1].glance[d] || {};
         return '<button class="fv" data-fw="' + n + '" data-fd="' + d + '"><div class="w">Week ' + n + ' · ' + DAY_SHORT[d] + '</div><div class="l">' + strip(g.dinner || PLAN.weeks[n - 1].days[d].title) + '</div></button>';
       }).join('') + '</div></div>' : '';
+    renderMenu();
   }
   $('weekList').addEventListener('click', function (e) {
     var c = e.target.closest('.wcard'); if (!c) return;
@@ -1277,7 +1677,243 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   });
   $('favBox').addEventListener('click', function (e) {
     var b = e.target.closest('.fv'); if (!b) return;
+    if (b.getAttribute('data-fq')) { showQuick(QMAP[b.getAttribute('data-fq')]); return; }
     showTab('today'); openWeek(+b.getAttribute('data-fw'), b.getAttribute('data-fd')); window.scrollTo(0, 0);
+  });
+  function showQuick(q) {
+    openModal('<h3>' + q.e + ' ' + esc(q.name) + '</h3><div class="small" style="margin-bottom:6px">✨ Quick pick · ' + q.min + ' min · no Saturday prep</div>' + quickHTML(q, null));
+  }
+
+  // ----- My menu -----
+  var menuWeek = 0; // 0 this week, 1 next week
+  function menuTarget(k) {
+    var n = homeWeek(), S = n ? instanceStart(n) : null;
+    if (!k) return { n: n, S: S };
+    if (S == null) return { n: 0, S: null };
+    var w = weekAt(S + 7);
+    return { n: w.n || 0, S: S + 7 };
+  }
+  function nightInfo(n, d, pick) {
+    if (pick && pick !== 'plan' && QMAP[pick]) { var q = QMAP[pick]; return { e: q.e, name: q.name, meta: '✨ Quick pick · ' + q.min + ' min' }; }
+    var D = PLAN.weeks[n - 1].days[d];
+    if (d === 'sun') return { e: '🥡', name: D.title.split(' · ').slice(1).join(' · ').replace(/^[^A-Za-z]+/, ''), meta: 'Takeaway night' };
+    var o = planDish(n, d);
+    return { e: d === 'sat' ? '🛒' : PE[o.p], name: o.name, meta: d === 'sat' ? 'After the Saturday prep' : 'From Week ' + n + ' · ' + timeTxt(n, d) };
+  }
+  function renderMenu() {
+    var P = state.prefs, h;
+    if (!P.done) {
+      h = '<div class="panel invite"><div class="kicker">✨ Make it yours</div><h3 style="margin:6px 0 4px">🍽️ Plan your weekly menu</h3>' +
+        '<p class="small">Answer a few quick questions and we\'ll suggest dinners that suit your family. Change any meal, any time.</p>' +
+        '<button class="btn wide" data-m="quiz">Start the 1-minute quiz</button></div>';
+    } else if (!P.on) {
+      h = '<div class="panel"><h3 style="margin-top:0">🍽️ My menu is off</h3><p class="small">You\'re cooking the classic 8-week plan. Your answers are saved.</p>' +
+        '<div class="row"><button class="btn" data-m="on">Use my menu</button><button class="btn secondary" data-m="quiz">Change answers</button></div></div>';
+    } else {
+      var t = menuTarget(menuWeek), M = t.n ? menuFor(t.n, t.S) : null;
+      h = '<div class="panel menu"><div class="mh"><div style="flex:1;min-width:0"><div class="kicker">✨ My menu</div><h2 style="margin:2px 0 0">' + (menuWeek ? 'Next week' : 'This week') + '</h2>' +
+        (M ? '<div class="small">Week ' + t.n + ' · ' + fmt(t.S, true) + ' – ' + fmt(t.S + 6, true) + '</div>' : '') + '</div>' +
+        '<div class="seg sm"><button data-mw="0" class="' + (menuWeek ? '' : 'on') + '">This</button><button data-mw="1" class="' + (menuWeek ? 'on' : '') + '">Next</button></div></div>';
+      if (!M) h += '<p class="small">' + (t.S != null && paused(t.S) || (!menuWeek && cur.ramadan) ? '🌙 The weeks are paused for Ramadan, so there\'s no menu to plan for this week.' : 'There\'s nothing to plan for this week yet.') + '</p>';
+      else {
+        var auto = 0;
+        h += DAYS.map(function (d, i) {
+          var x = nightInfo(t.n, d, M.picks[d]), dn = t.S + i;
+          if (!M.man[d] && M.picks[d] !== 'plan') auto++;
+          return '<button class="mrow' + (dn === T ? ' today' : '') + '" data-night="' + d + '"><span class="md">' + DAY_SHORT[d] + '<b>' + new Date(dn * 864e5).getUTCDate() + '</b></span>' +
+            '<span class="mi">' + x.e + '</span><span class="mn">' + esc(x.name) + (M.man[d] ? '<span class="tag">Your pick</span>' : '') + '<small>' + esc(x.meta) + '</small></span><span class="mc">Change</span></button>';
+        }).join('');
+        var btns = (auto ? '<button class="btn secondary sm" data-m="shuffle">🔀 Other ideas</button>' : '') +
+          (Object.keys(M.man).length ? '<button class="btn secondary sm" data-m="undo">↺ Undo my picks</button>' : '');
+        if (btns) h += '<div class="row" style="margin-top:10px">' + btns + '</div>';
+      }
+      h += '<div class="foot" style="gap:6px;flex-wrap:wrap"><button class="linkbtn small" data-m="quiz">✏️ Change my answers</button><button class="linkbtn small" data-m="off" style="color:var(--muted)">Exit my menu</button></div></div>';
+    }
+    $('menuBox').innerHTML = h;
+  }
+  $('menuBox').addEventListener('click', function (e) {
+    var w = e.target.closest('[data-mw]');
+    if (w) { menuWeek = +w.getAttribute('data-mw'); renderMenu(); return; }
+    var t = menuTarget(menuWeek), r = e.target.closest('[data-night]');
+    if (r) { pickMeal(t.n, t.S, r.getAttribute('data-night')); return; }
+    var b = e.target.closest('[data-m]'); if (!b) return;
+    var a = b.getAttribute('data-m'), key = t.S != null ? isoOf(t.S) : '', rec;
+    if (a === 'quiz') openQuiz();
+    else if (a === 'on') { state.prefs.on = true; save(); renderAll(); toast('My menu is on ✓'); }
+    else if (a === 'off') confirmBox('Exit my menu and go back to the classic 8-week plan? Your answers and picks are saved, so you can come back any time.', 'Exit my menu', function () {
+      state.prefs.on = false; save(); renderAll(); toast('Back to the classic plan');
+    });
+    else if (a === 'shuffle' && key) { rec = state.menus[key] || (state.menus[key] = {}); rec.seed = (rec.seed || 0) + 1; save(); renderAll(); toast('🔀 New ideas for the nights you haven\'t picked'); }
+    else if (a === 'undo' && key && state.menus[key]) { delete state.menus[key].picks; save(); renderAll(); toast('Back to the suggested menu'); }
+  });
+
+  // Pick a night's dinner: the plan's dish, or any quick pick
+  function pickMeal(n, S, d) {
+    if (PLUS.PICK_MEALS && !isPlus()) { openPaywall('menu'); return; }
+    var M = menuFor(n, S); if (!M) return;
+    var P = prefsFull(), now = M.picks[d], used = {};
+    DAYS.forEach(function (x) { if (x !== d && M.picks[x] !== 'plan') used[M.picks[x]] = DAY_LONG[x]; });
+    var pi = nightInfo(n, d, 'plan'), pw = d === 'sun' ? '' : whyNot(planDish(n, d), d, P);
+    var plan = { id: 'plan', e: pi.e, name: pi.name, meta: d === 'sun' ? 'Takeaway, the plan\'s idea' : 'The plan\'s dinner' + (d === 'sat' ? '' : ' · ' + timeTxt(n, d)), why: pw };
+    var opts = QUICK.map(function (q) {
+      var w = whyNot(q, d, P);
+      return { id: q.id, e: q.e, name: q.name, meta: '✨ Quick pick · ' + q.min + ' min · ' + PN[q.p] + (used[q.id] ? ' · also on ' + used[q.id] : ''), why: w,
+        sc: (w ? 0 : 100) + (state.favs['q:' + q.id] ? 10 : 0) + (q.at.indexOf(d) >= 0 ? 5 : 0) - (used[q.id] ? 3 : 0) };
+    }).sort(function (a, b) { return b.sc - a.sc || a.name.localeCompare(b.name); });
+    function row(o) {
+      return '<button class="opt' + (o.id === now ? ' on' : '') + (o.why ? ' dim' : '') + '" data-pick="' + o.id + '"><span class="oe">' + o.e + '</span><span class="ot">' + esc(o.name) +
+        (state.favs['q:' + o.id] ? ' ❤️' : '') + '<small>' + esc(o.meta) + (o.why ? ' · <span class="warn">⚠️ ' + esc(o.why) + '</span>' : '') + '</small></span>' + (o.id === now ? '<span class="ok">✓</span>' : '') + '</button>';
+    }
+    var fit = opts.filter(function (o) { return !o.why; }), rest = opts.filter(function (o) { return o.why; });
+    openModal('<h3>' + DAY_LONG[d] + '\'s dinner</h3><p class="small">' + (d === 'sat' ? 'You still do the Saturday prep; this is just tonight\'s dinner. ' : '') + 'Quick picks need no Saturday prep.</p>' +
+      row(plan) + fit.map(row).join('') +
+      (rest.length ? '<details class="more"><summary class="linkbtn">Show ' + rest.length + ' more that don\'t match your answers</summary>' + rest.map(row).join('') + '</details>' : ''));
+    each($('modal').querySelectorAll('[data-pick]'), function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-pick'), key = isoOf(S), rec = state.menus[key] || (state.menus[key] = {});
+        rec.picks = rec.picks || {}; rec.picks[d] = id;
+        save(); closeModal(); renderAll();
+        toast(DAY_LONG[d] + ': ' + nightInfo(n, d, id).name + ' ✓');
+      });
+    });
+  }
+
+  // ----- The questions -----
+  var QZ = null;
+  function quizSteps() {
+    var s = [
+      { id: 'meats', multi: true, t: 'What does your family eat?', d: 'Pick all that apply. Pick none for a vegetarian menu.',
+        o: [['c', '🍗', 'Chicken'], ['m', '🐑', 'Mutton or lamb'], ['b', '🐄', 'Beef'], ['f', '🐟', 'Fish'], ['e', '🥚', 'Eggs']] },
+      { id: 'veg', t: 'How many meat-free nights a week?', d: 'Tuesday is always a dal night.',
+        o: [[1, '🍛', 'Just the dal night'], [2, '🥬', 'Two nights'], [3, '🥗', 'Three or more']] },
+      { id: 'spice', t: 'How spicy do you like it?',
+        o: [[1, '🙂', 'Mild', 'Little ones at the table'], [2, '🌶️', 'Medium', 'A nice, warm kick'], [3, '🔥', 'Bring the heat', 'The spicier the better']] },
+      { id: 'time', t: 'How long can you cook on weeknights?', d: 'The Saturday prep already makes most nights quick.',
+        o: [[20, '⚡', '20 minutes or less'], [30, '⏱️', 'About 30 minutes'], [0, '🍲', 'I don\'t mind longer']] },
+      { id: 'sunday', t: 'And Sunday dinner?',
+        o: [['takeaway', '🥡', 'Takeaway night', 'Pizza, burgers, shawarma…'], ['cook', '🍳', 'Something easy at home', 'A quick recipe, no prep']] },
+      { id: 'avoid', multi: true, text: true, t: 'Anything you don\'t eat?', d: 'We\'ll keep these off your menu. Tap Next if it\'s nothing.',
+        o: AVOID.map(function (a) { return [a[0], '🚫', a[1]]; }) }
+    ];
+    var a = satOf(dayNum(state.anchor)), soon = nextSat(T), p = pauseRange();
+    if (cur.before && soon < a) s.push({ id: 'start', t: 'When do you want to start?',
+      o: [['now', '🚀', soon === T ? 'Today' : 'This Saturday', fmt(soon, true)], ['keep', '🗓️', 'With everyone', 'Week 1 starts ' + fmt(a, true)]] });
+    if (p && p.b > curSat) s.push({ id: 'ramadan', t: 'Pause the plan for Ramadan?', d: 'During Ramadan you cook from the freezer, with simple iftars and suhoors.',
+      o: [['yes', '🌙', 'Yes, pause it', fmt(p.a, true) + ' – ' + (p.b === Infinity ? 'Eid' : fmt(p.b - 1, true))], ['no', '🍽️', 'No, keep cooking', 'The weeks carry on as usual']] });
+    return s;
+  }
+  function openQuiz() {
+    var P = prefsFull();
+    QZ = { i: state.prefs.done ? 0 : -1, steps: quizSteps(), a: { meats: { c: P.meats.c, m: P.meats.m, b: P.meats.b, f: P.meats.f, e: P.meats.e },
+      veg: P.veg > 3 ? 1 : P.veg, spice: P.spice, time: P.time, sunday: P.sunday, avoid: P.avoid.slice(), start: 'keep', ramadan: 'yes' } };
+    closeModal();
+    $('quiz').classList.add('show'); document.body.style.overflow = 'hidden';
+    paintQuiz();
+  }
+  function closeQuiz() { $('quiz').classList.remove('show'); document.body.style.overflow = ''; $('quiz').innerHTML = ''; QZ = null; }
+  function anyMeat() { return ['c', 'm', 'b', 'f'].some(function (k) { return QZ.a.meats[k]; }); }
+  function qShown(st) { return st.id !== 'veg' || anyMeat(); }
+  function isOn(st, v) {
+    if (st.id === 'meats') return !!QZ.a.meats[v];
+    if (st.id === 'avoid') return QZ.a.avoid.indexOf(v) >= 0;
+    return String(QZ.a[st.id]) === String(v);
+  }
+  function paintQuiz() {
+    var el = $('quiz'), st = QZ.steps, i = QZ.i, h;
+    if (i < 0) {
+      h = '<div class="qtop"><button class="x" data-q="exit" aria-label="Close">✕</button><div style="flex:1"></div></div>' +
+        '<div class="qbody qhero"><div class="big">👩‍🍳</div><h2>Let\'s make the plan yours</h2>' +
+        '<p class="small" style="font-size:16px">A few quick questions, about a minute. We\'ll suggest a weekly menu for your family, and you can change any meal.</p></div>' +
+        '<div class="qnav col"><button class="btn next" data-q="next">Let\'s go</button><button class="linkbtn" data-q="exit">Not now, show me the classic plan</button></div>';
+    } else if (i >= st.length) {
+      var t = menuTarget(0), M = t.n ? menuFor(t.n, t.S) : null, sw = 0, list = '';
+      if (M) DAYS.forEach(function (d) {
+        if (M.picks[d] !== 'plan') sw++;
+        var x = nightInfo(t.n, d, M.picks[d]);
+        list += '<div class="mrow"><span class="md">' + DAY_SHORT[d] + '</span><span class="mi">' + x.e + '</span><span class="mn">' + esc(x.name) + '<small>' + esc(x.meta) + '</small></span></div>';
+      });
+      h = '<div class="qtop"><div style="flex:1"></div><button class="x" data-q="done" aria-label="Close">✕</button></div>' +
+        '<div class="qbody"><div class="qhero"><div class="big">🎉</div><h2>Your menu is ready!</h2><p class="small" style="font-size:15.5px">' +
+        (!M ? 'Your answers are saved. Your menu starts when the weeks start again.' : sw ? sw + ' night' + (sw > 1 ? 's' : '') + ' changed to suit your family. You can change any meal.' : 'This week\'s plan already suits your family. You can change any meal.') +
+        '</p></div>' + (list ? '<div class="panel menu" style="margin-top:12px">' + list + '</div>' : '') + '</div>' +
+        '<div class="qnav col"><button class="btn next" data-q="cook">Let\'s cook! 🎉</button>' + (M ? '<button class="btn secondary" data-q="change">Change some meals</button>' : '') +
+        '<button class="linkbtn" data-q="classic">Keep the classic plan instead</button></div>';
+    } else {
+      var s = st[i], vis = st.filter(qShown), num = vis.indexOf(s) + 1;
+      h = '<div class="qtop"><button class="x" data-q="exit" aria-label="Close">✕</button><div class="qbar"><span style="width:' + Math.round((num - 1) / vis.length * 100) + '%"></span></div>' +
+        '<button class="qskip" data-q="skip">Skip</button></div>' +
+        '<div class="qbody"><div class="qn">Question ' + num + ' of ' + vis.length + '</div><h2>' + s.t + '</h2>' + (s.d ? '<p class="small" style="font-size:15px;margin:0">' + s.d + '</p>' : '') +
+        '<div class="qopts' + (s.id === 'avoid' ? ' two' : '') + '">' + s.o.map(function (o) {
+          return '<button class="qo' + (isOn(s, o[0]) ? ' on' : '') + '" data-v="' + o[0] + '"><span class="qe">' + o[1] + '</span><span class="ql"><b>' + o[2] + '</b>' + (o[3] ? '<small>' + o[3] + '</small>' : '') + '</span><span class="ck"></span></button>';
+        }).join('') + '</div>' +
+        (s.text ? '<input id="qText" style="margin-top:12px" placeholder="Anything else? e.g. peas, lamb liver" autocomplete="off" value="' + esc(QZ.a.avoid.filter(function (x) { return !AVOID.some(function (y) { return y[0] === x; }); }).join(', ')) + '">' : '') +
+        '</div><div class="qnav"><button class="btn secondary back" data-q="back" aria-label="Back">‹</button><button class="btn next" data-q="next">Next ›</button></div>';
+    }
+    el.innerHTML = h;
+    el.scrollTop = 0;
+  }
+  function readAvoidText() {
+    var box = $('qText'); if (!box) return;
+    var known = AVOID.map(function (y) { return y[0]; });
+    QZ.a.avoid = QZ.a.avoid.filter(function (x) { return known.indexOf(x) >= 0; }).concat(
+      box.value.split(/[,;\n]+/).map(function (x) { return x.trim().toLowerCase(); }).filter(function (x) { return x.length > 1; }));
+  }
+  function qMove(dir) {
+    if (!QZ || QZ.busy) return;
+    var st = QZ.steps;
+    if (st[QZ.i] && st[QZ.i].text) readAvoidText();
+    var i = QZ.i + dir;
+    while (i >= 0 && i < st.length && !qShown(st[i])) i += dir;
+    if (i < 0) i = state.prefs.done ? 0 : -1;
+    QZ.i = i;
+    if (i >= st.length) {
+      QZ.busy = true;
+      $('quiz').innerHTML = '<div class="qbody qhero"><div class="qpot">🍲</div><h2>Cooking up your menu…</h2><p class="small">Checking the spices, counting the onions.</p></div>';
+      finishQuiz();
+      setTimeout(function () { if (QZ) { QZ.busy = false; paintQuiz(); } }, 1100);
+      return;
+    }
+    paintQuiz();
+  }
+  function finishQuiz() {
+    var a = QZ.a, P = state.prefs;
+    P.meats = a.meats; P.veg = anyMeat() ? a.veg : 6; P.spice = a.spice; P.time = a.time; P.sunday = a.sunday; P.avoid = a.avoid;
+    P.done = Date.now(); P.on = true; delete P.skipped;
+    if (a.start === 'now') { state.anchor = isoOf(nextSat(T)); state.anchorWeek = 1; }
+    if (a.ramadan === 'no') { state.pauseFrom = ''; state.pauseTo = ''; }
+    menuWeek = 0;
+    save(); refreshToday(); resetView(); renderAll();
+  }
+  $('quiz').addEventListener('click', function (e) {
+    if (!QZ || QZ.busy) return;
+    var o = e.target.closest('.qo'), b = e.target.closest('[data-q]'), st = QZ.steps[QZ.i];
+    if (o && st) {
+      var v = o.getAttribute('data-v');
+      if (st.id === 'meats') { QZ.a.meats[v] = !QZ.a.meats[v]; o.classList.toggle('on'); }
+      else if (st.id === 'avoid') { var k = QZ.a.avoid.indexOf(v); if (k >= 0) QZ.a.avoid.splice(k, 1); else QZ.a.avoid.push(v); o.classList.toggle('on'); }
+      else {
+        QZ.a[st.id] = /^\d+$/.test(v) ? +v : v;
+        each($('quiz').querySelectorAll('.qo'), function (x) { x.classList.toggle('on', x === o); });
+        QZ.busy = true;
+        setTimeout(function () { if (QZ) { QZ.busy = false; qMove(1); } }, 260);
+      }
+      if (navigator.vibrate) navigator.vibrate(8);
+      return;
+    }
+    if (!b) return;
+    var a = b.getAttribute('data-q');
+    if (a === 'next' || a === 'skip') qMove(1);
+    else if (a === 'back') qMove(-1);
+    else if (a === 'exit') {
+      var first = !state.prefs.done;
+      closeQuiz();
+      if (first) { state.prefs.skipped = Date.now(); save(); renderToday(); renderMenu(); }
+      toast(first ? 'No problem! Plan your menu any time from 🍽️ Menu.' : 'Nothing changed');
+    }
+    else if (a === 'cook') { closeQuiz(); showTab('today'); celebrate(); }
+    else if (a === 'change') { closeQuiz(); showTab('weeks'); }
+    else if (a === 'classic') { state.prefs.on = false; save(); renderAll(); closeQuiz(); showTab('today'); toast('Classic plan it is! Turn on My menu any time from 🍽️ Menu.'); }
+    else if (a === 'done') closeQuiz();
   });
 
   // ---------- Search ----------
@@ -1311,6 +1947,11 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
       .concat(recipesFrom(PLAN.ramadan.blocks, '🌙 Ramadan'))
       .concat(recipesFrom(PLAN.swaps, '🔁 Swaps'));
     rs.forEach(function (r) { r.kind = 'recipe'; r.text = r.body = strip(r.html); INDEX.push(r); });
+    QUICK.forEach(function (q) {
+      if (q.src) return;
+      var html = '<ol class="plain">' + q.steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>', t = q.name + ' ' + q.steps.map(strip).join(' ');
+      INDEX.push({ kind: 'recipe', where: '✨ Quick picks', label: q.name, html: html, text: t, body: t });
+    });
   }
   var qTimer = null;
   $('q').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(runSearch, 120); });
@@ -1424,6 +2065,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
       '<li>📅 It knows which week it is. Weeks change every Saturday, and Ramadan pauses them.</li>' +
       '<li>✅ Tap a step to tick it off. Ticks stay on this phone and clear when that week comes round again.</li>' +
       '<li>🔥 Finish every step in a day to grow your cooking streak.</li>' +
+      '<li>🍽️ My menu: answer a few questions in the Menu tab, then change any night to something your family likes.</li>' +
       '<li>👆 Swipe left or right on a day to move between days.</li>' +
       '<li>⚙️ Wrong week? Fix it in Week settings.</li></ul></div>';
     $('startBody').innerHTML = how + blocksHTML(PLAN.start, null);
@@ -1548,6 +2190,7 @@ ul.plain li,ol.plain li{margin:6px 0;line-height:1.55}
   paintTimers();
   recheck();
   if (/[?&]license=/.test(location.search) && !licensed()) openPaywall();
+  else if (!hadData && !state.prefs.done) openQuiz(); // first visit: ask the questions
   }
 })();
 </script>
