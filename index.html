@@ -496,6 +496,59 @@ button.box{cursor:pointer}
 
 /* ===== Print ===== */
 #print{display:none}
+/* ---------- Tablets: an iPad standing up, or a phone on its side ---------- */
+.daybar .dt{display:none}
+/* below the wide layout, the week and day wrappers drop out, so the day bar still sticks to the top */
+.tgrid,.tside,.tmain{display:contents}
+@media screen and (min-width:720px){
+  header.top,main,nav.tabs .in{max-width:720px}
+}
+@media screen and (min-width:720px) and (min-height:600px){
+  #cook>*{width:100%;max-width:980px;margin-left:auto;margin-right:auto}
+  #cook .ctext{font-size:32px}
+  #cook .cnum{font-size:17px}
+}
+@media screen and (min-width:1000px) and (min-height:700px){
+  #cook .ctext{font-size:35px}
+}
+/* ---------- Wide screens: an iPad on its side. The tabs move to a rail on the left, and Today shows the week beside the day ---------- */
+@media screen and (min-width:1000px){
+  :root{--rail:96px}
+  body{padding-left:calc(var(--rail) + env(safe-area-inset-left));padding-bottom:calc(env(safe-area-inset-bottom) + 28px)}
+  header.top,main{max-width:1200px;padding-left:24px;padding-right:24px}
+  nav.tabs{top:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));flex-direction:column;justify-content:center;
+    padding:calc(env(safe-area-inset-top) + 12px) 0 calc(env(safe-area-inset-bottom) + 12px) env(safe-area-inset-left);border-top:0;border-right:1px solid var(--line)}
+  nav.tabs .in{flex-direction:column;gap:18px;max-width:none}
+  .tabs button{flex:none;font-size:12px;gap:5px}
+  .tabs button .ic{width:58px;height:34px}
+  #timers{left:calc(var(--rail) + env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom) + 18px)}
+  .tgrid{display:grid;grid-template-columns:clamp(290px,31%,360px) minmax(0,1fr);gap:24px;align-items:start}
+  /* the week stays in view while the day scrolls; the padding leaves room for shadows */
+  .tmain{display:block}
+  .tside{display:block;position:sticky;top:calc(env(safe-area-inset-top) + 4px);max-height:calc(100vh - env(safe-area-inset-top) - 8px);max-height:calc(100dvh - env(safe-area-inset-top) - 8px);
+    overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding:8px 12px 16px;margin:-8px -12px 0}
+  .tside::-webkit-scrollbar{display:none}
+  /* a slightly tighter week card, so all seven days fit beside it on smaller iPads */
+  .tside .hero{padding:14px}
+  .tside .wkhead .num{font-size:30px}
+  .tside .lead{font-size:13.5px;margin-top:8px}
+  .tside .stats{margin-top:9px;gap:6px}
+  .tside .stat{font-size:12px;padding:5px 9px}
+  .tside .daybar{position:static;flex-direction:column;gap:5px;margin:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .tside .daybar button{flex:none;display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-areas:"dd dt" "b dt";column-gap:12px;align-items:center;text-align:left;padding:6px 14px 7px 10px;transform:none}
+  .tside .daybar .dd{grid-area:dd;text-align:center}
+  .tside .daybar button b{grid-area:b;text-align:center}
+  .tside .daybar .dt{grid-area:dt;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:15px;font-weight:800;line-height:1.3;color:var(--text)}
+  .tside .daybar button.on .dt{color:var(--bg)}
+  .tside .daybar button.today::after{left:26px;margin-left:0;bottom:4px}
+  #view-today:not(.split),#view-breakfast,#view-more{max-width:760px;margin:0 auto}
+  #view-groceries{max-width:720px;margin:0 auto}
+  #view-weeks{max-width:1000px;margin:0 auto}
+  #weekList{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;align-items:start}
+  #weekList>:not(.wcard){grid-column:1/-1}
+  .actions{flex-wrap:wrap;overflow:visible}
+}
+
 @media print{
   body{background:#fff;color:#000;padding:0;font-size:12px}
   body>*:not(#print){display:none!important}
@@ -555,6 +608,9 @@ button.box{cursor:pointer}
     </div>
     <label>Colour theme</label>
     <div class="swatches" id="swatches"></div>
+    <label>Keep the screen on</label>
+    <div class="seg" id="awakeSeg"><button data-aw="1">🔆 On</button><button data-aw="0">Off</button></div>
+    <p class="small" id="awakeNote" style="margin-bottom:0"></p>
   </div>
 
   <div class="panel" id="voicePanel"></div>
@@ -1563,7 +1619,7 @@ button.box{cursor:pointer}
 
   function renderToday() {
     var el = $('view-today');
-    if ((!view.browsing && cur.ramadan) || view.ramadan) { el.innerHTML = ramadanToday(); return; }
+    if ((!view.browsing && cur.ramadan) || view.ramadan) { el.className = ''; el.innerHTML = ramadanToday(); return; }
     var n = view.w, W = PLAN.weeks[n - 1], S = instanceStart(n), M = menuFor(n, S);
     var isCur = S != null && S === curSat && !!cur.n;
     var h = '';
@@ -1612,34 +1668,41 @@ button.box{cursor:pointer}
     // day bar
     h += '<div class="daybar" id="daybar">' + DAYS.map(function (d, i) {
       var dn = S != null ? S + i : null, st = dayStats(n, d, S);
-      return '<button data-day="' + d + '" class="' + (d === view.d ? 'on' : '') + (dn === T ? ' today' : '') + (st.all && st.done === st.all ? ' full' : '') + '">' + DAY_SHORT[d] +
-        '<b>' + (dn != null ? new Date(dn * 864e5).getUTCDate() : '·') + '</b></button>';
+      return '<button data-day="' + d + '" class="' + (d === view.d ? 'on' : '') + (dn === T ? ' today' : '') + (st.all && st.done === st.all ? ' full' : '') + '"><span class="dd">' + DAY_SHORT[d] + '</span>' +
+        '<b>' + (dn != null ? new Date(dn * 864e5).getUTCDate() : '·') + '</b><span class="dt">' + esc(dayTitle(W, d, nightPick(n, d, S).q)) + '</span></button>';
     }).join('') + '</div>';
 
-    h += '<div class="panel" id="daycard">' + dayHTML(n, W, view.d, S) + '</div>';
-    if (W.next && view.d === 'fri') h += '<div class="panel small" style="color:var(--text)">' + W.next + '</div>';
-    el.innerHTML = h;
+    // On a wide screen (an iPad on its side) the week sits beside the day; on a phone they stack
+    var m = '<div class="panel" id="daycard">' + dayHTML(n, W, view.d, S) + '</div>';
+    if (W.next && view.d === 'fri') m += '<div class="panel small" style="color:var(--text)">' + W.next + '</div>';
+    el.className = 'split';
+    el.innerHTML = '<div class="tgrid"><div class="tside">' + h + '</div><div class="tmain">' + m + '</div></div>';
     updateCounts();
   }
 
+  // A day's dish, as its card shows it (q: the night's quick pick, if My menu chose one)
+  function dayTitle(W, d, q) {
+    var parts = W.days[d].title.split(' · ');
+    return d === 'sat' ? '🛒 Prep day' : q ? q.e + ' ' + q.name : d === 'sun' ? parts.slice(1).join(' · ') : parts[1];
+  }
   function dayHTML(n, W, d, S) {
     var D = W.days[d], g = W.glance[d] || {}, i = DAYS.indexOf(d);
     var dn = S != null ? S + i : null, np = nightPick(n, d, S), q = np.q, M = np.M;
     var kicker = DAY_LONG[d] + (dn != null ? ' · ' + fmt(dn) : '') + (dn === T ? ' · Today' : '');
-    var parts = D.title.split(' · '), title, time = '', pills = [];
+    var parts = D.title.split(' · '), title = dayTitle(W, d, q), time = '', pills = [];
     function add(icon, html) { if (html && strip(html).trim() && strip(html).trim() !== '—') pills.push('<span class="pill">' + icon + ' ' + html + '</span>'); }
     if (d === 'sat') {
-      title = '🛒 Prep day'; time = parts.slice(1).join(' · ');
+      time = parts.slice(1).join(' · ');
       add('⏱', esc(time)); add('🍳 Tonight:', q ? esc(q.name) : g.dinner); if (!q) add('🥗', g.salad); add('🧃', g.juice);
     } else if (q) {
-      title = q.e + ' ' + q.name; add('⏱', q.min + ' min'); add('✨', 'Quick pick, no prep'); add('🧃', g.juice);
+      add('⏱', q.min + ' min'); add('✨', 'Quick pick, no prep'); add('🧃', g.juice);
     } else if (d === 'sun') {
-      title = parts.slice(1).join(' · '); add('🧃', g.juice);
+      add('🧃', g.juice);
     } else {
-      title = parts[1]; time = parts.slice(2).join(' · ');
+      time = parts.slice(2).join(' · ');
       add('⏱', esc(time)); add('🥗', g.salad); add('🧃', g.juice);
     }
-    if ('wakeLock' in navigator && !noWake) pills.push('<button class="pill awake' + (wantAwake ? ' on' : '') + '" data-act="awake">' + (wantAwake ? '🔆 Screen stays on' : '🔅 Keep screen on') + '</button>');
+    if (CAN_WAKE) pills.push('<button class="pill awake' + (awakeOn() ? ' on' : '') + '" data-act="awake">' + (awakeOn() ? '🔆 Screen stays on' : '🔅 Keep screen on') + '</button>');
 
     var plus = isPlus(), lk = plus ? '' : ' <span class="lock">👑</span>', fk = q ? 'q:' + q.id : 'w' + n + ':' + d, fav = !!state.favs[fk];
     var ctx = { day: d, seen: {}, done: bag(n, S) };
@@ -1718,7 +1781,7 @@ button.box{cursor:pointer}
     else if (a === 'clearWeek') confirmBox('Clear the ticks for Week ' + view.w + '?', 'Clear', function () {
       delete state.ticks['w' + view.w]; save(); renderToday(); toast('Ticks cleared');
     });
-    else if (a === 'awake') setAwake(!wantAwake);
+    else if (a === 'awake') setAwake(!awakeOn());
     else if (a === 'settings') openSettings();
     else if (a === 'browse') showTab('weeks');
     else if (a === 'cook') need('cook', function () { openCook(); });
@@ -1761,10 +1824,13 @@ button.box{cursor:pointer}
     var wk = 0; DAYS.forEach(function (d) { wk += dayStats(cur.n, d, curSat).done; });
     s[0].textContent = '🔥 ' + streak() + '-day streak'; s[1].textContent = '✅ ' + wk + ' steps done this week';
   }
+  var WIDE = window.matchMedia ? window.matchMedia('screen and (min-width:1000px)') : { matches: false };
   function goDay(d) {
     if (!d || d === view.d) return;
     view.d = d;
-    var bar = $('daybar'), top = bar ? bar.getBoundingClientRect().top + window.scrollY - 8 : 0;
+    // Keep the new day's first step in view: below the day bar on a phone, at the top of the day's column on a wide screen
+    var wide = WIDE.matches, a = wide ? document.querySelector('.tmain') : $('daybar');
+    var top = a ? a.getBoundingClientRect().top + window.scrollY - (wide ? 12 : 8) : 0;
     renderToday();
     if (window.scrollY > top) window.scrollTo(0, top);
   }
@@ -1913,7 +1979,7 @@ button.box{cursor:pointer}
     cook.i = 0;
     for (var i = 0; i < cook.list.length; i++) if (!cook.list[i].classList.contains('done')) { cook.i = i; break; }
     $('cook').classList.add('show'); document.body.style.overflow = 'hidden';
-    if ('wakeLock' in navigator && !wantAwake && !noWake) setAwake(true);
+    cookAwake = true; syncAwake();
     unlockAudio(); unlockSpeech();
     if (opts && opts.voice) { state.voice.asked = true; state.voice.read = true; state.voice.listen = true; save(); }
     VO.last = null; VO.idle = 0;
@@ -1943,6 +2009,7 @@ button.box{cursor:pointer}
   }
   function closeCook(keepTalking) {
     $('cook').classList.remove('show'); document.body.style.overflow = ''; $('cook').innerHTML = '';
+    cookAwake = false; syncAwake();
     if (VO.mode === 'cook') { VO.mode = null; stopRec(); if (!keepTalking) { aiStop(); hush(); } }
   }
   function cookOpen() { return $('cook').classList.contains('show'); }
@@ -2654,23 +2721,50 @@ button.box{cursor:pointer}
   $('micBtn').addEventListener('click', openVoiceSheet);
   if (!canSpeak() && !SR) $('micBtn').hidden = true;
 
-  // ---------- Keep the screen on while cooking ----------
-  var lock = null, wantAwake = false, noWake = false;
+  // ---------- Keep the screen on ----------
+  // On by default on tablets (an iPad on a kitchen stand), off on phones; 🔅 on a day or More → Look and feel changes it.
+  // Cook mode always keeps it on. The phone lets go when the app is hidden, so it's asked again on return,
+  // and Safari can refuse until someone touches the screen, so a refusal is tried again on the next tap.
+  var lock = null, cookAwake = false, asking = false, lastTap = 0;
+  var CAN_WAKE = 'wakeLock' in navigator;
+  var TABLET = Math.min(screen.width, screen.height) >= 600 && navigator.maxTouchPoints > 1;
+  function awakeOn() { return state.awake != null ? !!state.awake : TABLET; }
+  function syncAwake() {
+    if (!CAN_WAKE) return;
+    var want = (awakeOn() || cookAwake) && document.visibilityState === 'visible';
+    if (!want) { if (lock) { var old = lock; lock = null; old.release().catch(function () {}); } return; }
+    if (lock || asking) return;
+    asking = true;
+    navigator.wakeLock.request('screen').then(function (l) {
+      asking = false;
+      if (!(awakeOn() || cookAwake)) { l.release().catch(function () {}); return; }
+      lock = l;
+      l.addEventListener('release', function () { if (lock === l) lock = null; });
+    }).catch(function () { asking = false; });
+  }
   function setAwake(on) {
-    wantAwake = on;
-    if (on) {
-      navigator.wakeLock.request('screen').then(function (l) {
-        lock = l;
-        l.addEventListener('release', function () { lock = null; });
-        if (!$('cook').classList.contains('show')) toast('The screen will stay on while the app is open');
-      }).catch(function () { wantAwake = false; noWake = true; var b = document.querySelector('[data-act="awake"]'); if (b) b.remove(); });
-    } else if (lock) { lock.release(); lock = null; }
-    paintAwake();
+    state.awake = on; save(); syncAwake(); paintAwake();
+    if (on) toast('The screen will stay on while the app is open');
   }
   function paintAwake() {
-    var b = document.querySelector('[data-act="awake"]');
-    if (b) { b.classList.toggle('on', wantAwake); b.textContent = wantAwake ? '🔆 Screen stays on' : '🔅 Keep screen on'; }
+    var on = awakeOn(), b = document.querySelector('[data-act="awake"]');
+    if (b) { b.classList.toggle('on', on); b.textContent = on ? '🔆 Screen stays on' : '🔅 Keep screen on'; }
+    var s = $('awakeSeg');
+    s.hidden = !CAN_WAKE;
+    each(s.querySelectorAll('button'), function (x) { x.classList.toggle('on', (x.getAttribute('data-aw') === '1') === on); });
+    $('awakeNote').textContent = CAN_WAKE ? 'While the app is open, so the screen doesn\'t dim or lock while you cook. It uses a little more battery.'
+      : 'This browser can\'t keep the screen on by itself. On an iPad, go to Settings → Display & Brightness → Auto-Lock and choose Never while you cook.';
   }
+  function tapAwake() {
+    if (!CAN_WAKE || lock || asking || !(awakeOn() || cookAwake) || Date.now() - lastTap < 2000) return;
+    lastTap = Date.now(); syncAwake();
+  }
+  document.addEventListener('touchend', tapAwake, true);
+  document.addEventListener('click', tapAwake, true);
+  document.addEventListener('keydown', tapAwake, true);
+  $('awakeSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-aw]'); if (b) setAwake(b.getAttribute('data-aw') === '1');
+  });
 
   // ---------- Menu tab: My menu and the 8 weeks ----------
   function renderWeeks() {
@@ -3254,13 +3348,14 @@ button.box{cursor:pointer}
   var lastDay = T, wasPlus = isPlus();
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState !== 'visible') return;
-    if (wantAwake && !lock) setAwake(true);
+    syncAwake();
     refreshToday(); recheck();
     if (T !== lastDay || wasPlus !== isPlus()) { lastDay = T; wasPlus = isPlus(); resetView(); renderAll(); }
   });
   resetView();
   renderAll();
   paintTimers();
+  paintAwake(); syncAwake();
   recheck();
   if (/[?&]license=/.test(location.search) && !licensed()) openPaywall();
   else if (!hadData && !state.prefs.done) openQuiz(); // first visit: ask the questions
