@@ -118,7 +118,7 @@ input::placeholder,textarea::placeholder{color:var(--muted);opacity:.75}
 .modal .x{float:right;border:0;background:var(--card2);color:var(--text);width:36px;height:36px;border-radius:50%;font-size:16px;margin:-4px -4px 0 8px;cursor:pointer}
 @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-10px);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:20px;font-size:14.5px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:80;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-10px);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:20px;font-size:14.5px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:80;width:max-content;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ===== Bottom tab bar ===== */
@@ -1024,17 +1024,24 @@ button.box{cursor:pointer}
     return html.replace(SYM_RE, function (m) { return '<span class="sym" data-sym="' + norm(m) + '">' + m + '</span>'; });
   }
   // The appliances the plan uses, and what to do without each one
+  // (a 6th entry gives a better tip for families who have another appliance, by its id)
   var KIT = [
     ['ip', '🍲', 'Instant Pot', 'Or another electric pressure cooker', 'No Instant Pot? Use a pressure cooker: bring it up to pressure on high, then cook on low for about the same time. “Sauté” just means fry in the open pot.'],
     ['af', '💨', 'Air fryer', '', 'No air fryer? Use the oven at the same temperature on a lined tray, 5–10 minutes longer, turning once.'],
-    ['ninja', '🌀', 'Ninja chopper', 'Chop, Puree, Dough and Disc', 'No Ninja? Chop or grate by hand, blend purées and pastes in a blender, and knead dough by hand.'],
+    ['ninja', '🌀', 'Ninja chopper', 'Chop, Puree, Dough and Disc', 'No Ninja? Chop or grate by hand, blend purées and pastes in a blender, and knead dough by hand.',
+      { pull: 'No Ninja? Chop in the ✂️ pull-string chopper: one onion per batch, and the kothimir first, while the bowl is dry. Slice or grate by hand, blend purées and pastes in a blender, and knead dough by hand.' }],
     ['pull', '✂️', 'Pull-string chopper', '', 'No pull-string chopper? Chop finely with a knife.'],
     ['dicer', '🎲', 'Cube dicer', '', 'No cube dicer? Dice with a knife.'],
     ['rc', '🍚', 'Rice cooker', '', 'No rice cooker? Boil soaked rice in plenty of salted water until just tender, 8–10 minutes, then drain.'],
     ['dw', '🍽️', 'Dishwasher', '', 'No dishwasher? Wash up halfway through, so the bowls are free for the second half.']
   ];
   function missingKit(kit) { kit = kit === undefined ? state.prefs.kit : kit; return kit ? KIT.filter(function (x) { return kit[x[0]] === false; }) : []; }
-  function kitList(list) { return list.map(function (x) { return '<div>' + x[1] + ' ' + esc(x[4]) + '</div>'; }).join(''); }
+  function kitTip(x, kit) {
+    kit = kit === undefined ? state.prefs.kit : kit;
+    for (var k in x[5] || {}) if (kit && kit[k]) return x[5][k];
+    return x[4];
+  }
+  function kitList(list, kit) { return list.map(function (x) { return '<div>' + x[1] + ' ' + esc(kitTip(x, kit)) + '</div>'; }).join(''); }
   // "For your kitchen" tips for the appliances a day uses that the family doesn't have
   function kitNote(html) {
     var miss = missingKit().filter(function (x) { return html.indexOf(norm(x[1])) >= 0; });
@@ -1050,7 +1057,8 @@ button.box{cursor:pointer}
   }
   function symInfo(s) {
     var k = KIT.filter(function (x) { return norm(x[1]) === s; })[0], miss = k && missingKit().indexOf(k) >= 0;
-    toast(s + ' ' + (SYM[s] || '') + (miss ? '. ' + k[4] : ''), miss ? 6000 : 0);
+    var msg = s + ' ' + (SYM[s] || '') + (miss ? '. ' + kitTip(k) : '');
+    toast(msg, miss ? Math.max(6000, msg.length * 50) : 0);
   }
   function legendHTML(kit) {
     var miss = missingKit(kit || null), no = {};
@@ -1059,7 +1067,7 @@ button.box{cursor:pointer}
       var off = no[norm(r[0])];
       return '<div class="lg' + (off ? ' no' : '') + '"><span class="li">' + r[0] + '</span><span class="lt">' + esc(r[1]) + (off ? '<small>Not in your kitchen</small>' : '') + '</span></div>';
     }).join('') + '</div>' +
-      (miss.length ? '<div class="note kitn">🧰 <b>Missing something? No problem:</b>' + kitList(miss) + '</div>' : '') +
+      (miss.length ? '<div class="note kitn">🧰 <b>Missing something? No problem:</b>' + kitList(miss, kit || null) + '</div>' : '') +
       '<div class="note words"><b>Words you\'ll see</b><div><b>GGP</b>: ginger-garlic paste.</div>' +
       '<div><b>Pudi</b>: a small folded paper packet of measured spices, with its name written on it.</div>' +
       '<div><span class="chip">Monday onions</span>: a box you filled and labelled on Saturday.</div>' +
@@ -2541,8 +2549,9 @@ button.box{cursor:pointer}
       L.push('The family eats ' + (eats.length ? eats.join(', ') : 'no meat, fish or eggs') + '. Spice: ' + ['', 'mild', 'medium', 'hot'][P.spice] + '.' +
         (P.avoid.length ? ' They avoid: ' + P.avoid.join(', ') + '.' : '') + (P.time ? ' Weeknight cooking time: about ' + P.time + ' minutes.' : ''));
     }
-    var miss = missingKit().map(function (k) { return k[2]; });
-    if (miss.length) L.push('Not in their kitchen: ' + miss.join(', ') + '.');
+    var miss = missingKit().map(function (k) { return k[2]; }), kit = state.prefs.kit;
+    var have = kit ? KIT.filter(function (k) { return kit[k[0]]; }).map(function (k) { return k[2]; }) : [];
+    if (miss.length) L.push('Not in their kitchen: ' + miss.join(', ') + '.' + (have.length ? ' In their kitchen: ' + have.join(', ') + '.' : ''));
     if (timers.length) L.push('Timers: ' + timers.map(function (t) { var left = (t.end - Date.now()) / 6e4; return (left > 0 ? durText(left) + ' left' : 'ringing') + ' for ' + shortLabel(t.label); }).join('; ') + '.');
     var list = state.groceries.filter(function (x) { return !x.done; }).slice(0, 15).map(function (x) { return x.t; });
     if (list.length) L.push('Shopping list: ' + list.join(', ') + '.');
