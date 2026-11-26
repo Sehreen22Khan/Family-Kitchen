@@ -1,0 +1,16 @@
+{
+  "name": "family-kitchen-ai",
+  "private": true,
+  "description": "The AI helper behind Family Kitchen's voice: a Cloudflare Worker that holds the Anthropic API key",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.14.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.168.0"
+  }
+}

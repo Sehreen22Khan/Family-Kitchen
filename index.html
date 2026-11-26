@@ -110,7 +110,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.5}
 input::placeholder,textarea::placeholder{color:var(--muted);opacity:.75}
 .small{font-size:13.5px;color:var(--muted);line-height:1.5}
 .kicker{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-text);font-weight:900}
-.overlay{position:fixed;inset:0;background:rgba(25,12,5,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:60}
+.overlay{position:fixed;inset:0;background:rgba(25,12,5,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:78}
 .overlay.show{display:flex;animation:fade .2s}
 .modal{background:var(--card);border-radius:26px 26px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));width:100%;max-width:520px;max-height:90vh;overflow:auto;-webkit-overflow-scrolling:touch;animation:up .28s cubic-bezier(.2,.9,.3,1.1)}
 @media (min-width:640px){.overlay{align-items:center;padding:16px}.modal{border-radius:26px;padding-bottom:22px}}
@@ -478,6 +478,8 @@ button.box{cursor:pointer}
 .vmsg.you{align-self:flex-end;background:var(--brand);color:var(--brand-ink);border-bottom-right-radius:6px}
 .vmsg.app{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:6px}
 .vmsg.live{opacity:.6}
+.vmsg.ai::before{content:"✨ AI helper";display:block;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:var(--brand-text);margin-bottom:2px}
+.vtx{max-height:34vh;overflow-y:auto}
 .vmic{display:block;margin:8px auto 12px;width:80px;height:80px;border-radius:50%;border:0;font-size:34px;background:linear-gradient(135deg,var(--brand2),var(--brand));color:var(--brand-ink);box-shadow:0 10px 24px -8px var(--brand);cursor:pointer}
 .vmic.on{background:#E5484D;animation:pulse 1.3s infinite}
 .vchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
@@ -627,6 +629,8 @@ button.box{cursor:pointer}
   var CHANNEL_LINK = '';
   // Your WhatsApp group invite link, e.g. 'https://chat.whatsapp.com/AbC123...'
   var GROUP_LINK = '';
+  // The AI helper's address, once it's set up (see AI_SETUP.md), e.g. 'https://family-kitchen-ai.yourname.workers.dev'
+  var AI_URL = '';
 
   // ===== KITCHEN PLUS (paid features) — see MONETIZATION.md =====
   // Paste your Lemon Squeezy checkout links. Leave a link empty to hide that plan.
@@ -669,7 +673,7 @@ button.box{cursor:pointer}
   // (Sat 6 Feb) until the first Saturday after Eid (Sat 13 Mar), which is Week 4.
   var DEFAULTS = { anchor: '2027-01-16', anchorWeek: 1, pauseFrom: '2027-02-06', pauseTo: '2027-03-13', ticks: {} };
   // Fields added later (only ever added, never renamed)
-  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [], prefs: {}, menus: {}, voice: { read: true, listen: true, rate: 1, name: '', asked: false } };
+  var EXTRA = { plus: {}, groceries: [], notes: {}, favs: {}, theme: { mode: 'auto', accent: 'tomato' }, timersRun: [], prefs: {}, menus: {}, voice: { read: true, listen: true, rate: 1, name: '', asked: false, ai: true, lang: 'en' } };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -762,7 +766,7 @@ button.box{cursor:pointer}
   var FEATURES = {
     timers: ['⏱', 'One-tap cooking timers', 'Tap any “10 min” in a step and a timer starts, with an alarm.'],
     cook: ['👩‍🍳', 'Cook mode', 'One big step at a time, and the screen stays on.'],
-    voice: ['🎙️', 'Hands-free voice', 'Steps read out loud. Say “next”, “repeat” or “timer 10 minutes”, or ask what’s for dinner. Perfect for messy hands.'],
+    voice: ['🎙️', 'Hands-free voice and AI helper', 'Steps read out loud, and an AI cooking helper you just talk to: “Can I use thighs instead?”, “Set a timer and go to the next step”. Perfect for messy hands.'],
     grocery: ['🛒', 'Grocery list', 'Build your list, tick it off in the shop, send it on WhatsApp.'],
     fav: ['❤️', 'Favourites and notes', 'Remember the dishes your family loved and your own tweaks.'],
     themes: ['🎨', 'Colour themes', 'Make the app yours with five extra colour themes.'],
@@ -800,6 +804,7 @@ button.box{cursor:pointer}
         state.plus.key = 'tester'; state.plus.tester = 1; state.plus.th = fp; state.plus.inst = '';
         state.plus.ok = true; state.plus.checked = Date.now(); state.plus.plan = 'Tester';
         save(); done(null);
+        if (AI_URL) aiUnlock({ key: key }, function () {});
         return;
       }
       activateStore(key, done);
@@ -812,6 +817,7 @@ button.box{cursor:pointer}
       state.plus.key = key; state.plus.inst = r.instance && r.instance.id; state.plus.ok = true;
       state.plus.checked = Date.now(); state.plus.plan = (r.meta && r.meta.variant_name) || '';
       save(); done(null);
+      if (AI_URL) aiUnlock({ key: key, instance: state.plus.inst || '' }, function () {});
     }).catch(function () { done('Could not reach the licence server. Check your connection.'); });
   }
   function recheck() {
@@ -1929,19 +1935,20 @@ button.box{cursor:pointer}
   }
   function closeCook(keepTalking) {
     $('cook').classList.remove('show'); document.body.style.overflow = ''; $('cook').innerHTML = '';
-    if (VO.mode === 'cook') { VO.mode = null; stopRec(); if (!keepTalking) hush(); }
+    if (VO.mode === 'cook') { VO.mode = null; stopRec(); if (!keepTalking) { aiStop(); hush(); } }
   }
   function cookOpen() { return $('cook').classList.contains('show'); }
   // next: tick and move on · skip: move on without ticking · prev: go back
-  function cookGo(c, byVoice) {
+  // quiet: the AI moved the step, so it reads it after its own answer
+  function cookGo(c, byVoice, quiet) {
     if (c === 'prev') {
-      if (!cook.i) { if (byVoice) reply('This is the first step.'); return; }
-      cook.i--; paintCook(); speakStep(); return;
+      if (!cook.i) { if (byVoice && !quiet) reply('This is the first step.'); return; }
+      cook.i--; paintCook(); if (!quiet) speakStep(); return;
     }
     var el = cook.list[cook.i];
     if (c !== 'skip' && !el.classList.contains('done')) toggleTick(el, true);
-    if (cook.i < cook.list.length - 1) { cook.i++; paintCook(); speakStep(); return; }
-    if (VO.mode === 'cook' && state.voice.read) say('All done. Alhamdulillah! Enjoy your dinner.');
+    if (cook.i < cook.list.length - 1) { cook.i++; paintCook(); if (!quiet) speakStep(); return; }
+    if (VO.mode === 'cook' && state.voice.read && !quiet) say('All done. Alhamdulillah! Enjoy your dinner.');
     closeCook(true);
     toast('Dinner is done. Alhamdulillah! 🎉');
   }
@@ -1998,7 +2005,8 @@ button.box{cursor:pointer}
   // Uses the browser's own speech, so it costs nothing. Reading out loud works almost everywhere;
   // listening needs Chrome, Edge or Safari, and the first time the browser asks to use the microphone.
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var VO = { rec: null, want: false, speaking: false, mode: null, await: null, log: [], last: null, lastYou: '', interim: '', sayId: 0, idle: 0, unlocked: false };
+  var VO = { rec: null, want: false, speaking: false, mode: null, await: null, log: [], last: null, lastYou: '', interim: '', sayId: 0, idle: 0, unlocked: false,
+    pend: 0, streaming: false, after: null, hist: [], thinking: false, live: '', aiQ: '', aiCtl: null, pendingQ: '' };
   function voiceOK() { return !!PLUS.VOICE_FREE || isPlus(); }
   function canSpeak() { return 'speechSynthesis' in window; }
   function unlockSpeech() {
@@ -2008,7 +2016,11 @@ button.box{cursor:pointer}
     try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
   }
   function englishVoices() { return canSpeak() ? speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }) : []; }
-  function pickVoice() {
+  // Hindi and Urdu need a Hindi or Urdu voice; everything else is read by an English voice
+  function pickVoice(text) {
+    var all = canSpeak() ? speechSynthesis.getVoices() : [];
+    if (/[\u0900-\u097F]/.test(text || '')) return all.filter(function (v) { return /^hi/i.test(v.lang); })[0] || null;
+    if (/[\u0600-\u06FF]/.test(text || '')) return all.filter(function (v) { return /^ur/i.test(v.lang); })[0] || null;
     var vs = englishVoices(), want = state.voice.name;
     // An Indian English voice says haldi, zeera and kothimir best
     return vs.filter(function (v) { return v.name === want; })[0] || vs.filter(function (v) { return /en[-_]IN/i.test(v.lang); })[0] ||
@@ -2035,27 +2047,44 @@ button.box{cursor:pointer}
       .replace(/\bGGP\b/g, 'ginger-garlic paste').replace(/\be\.g\.\s*/g, 'for example ').replace(/\//g, ' or ');
     return t.replace(/\s+([,.:;])/g, '$1').replace(/([,.:;]){2,}/g, '$1').replace(/\s+/g, ' ').trim();
   }
-  function say(text, done) {
-    var id = ++VO.sayId, parts = canSpeak() && text ? spoken(text).match(/[^.!?]+[.!?]*/g) || [] : [];
-    if (!parts.length) { VO.speaking = false; resumeRec(); if (done) done(); return; }
-    VO.speaking = true; pauseRec();
+  // Says text out loud. more: add it after what's already being said, for answers that stream in.
+  function say(text, more) {
+    if (!more) { VO.sayId++; VO.pend = 0; }
+    var id = VO.sayId, src = canSpeak() && text ? String(text) : '', native = /[\u0900-\u097F\u0600-\u06FF]/.test(src);
+    var parts = src ? (native ? src : spoken(src)).match(/[^.!?।۔]+[.!?।۔]*/g) || [] : [];
+    var v = parts.length ? pickVoice(src) : null;
+    if (native && !v) parts = []; // no Hindi or Urdu voice on this phone: the answer shows on screen instead
+    if (!parts.length) { if (!more) settle(); return; }
+    VO.speaking = true; VO.pend += parts.length; pauseRec();
     function go() {
       if (id !== VO.sayId) return;
-      var v = pickVoice();
-      parts.forEach(function (p, i) {
+      parts.forEach(function (p) {
         var u = new SpeechSynthesisUtterance(p.trim());
         if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
         u.rate = state.voice.rate || 1;
-        if (i === parts.length - 1) u.onend = u.onerror = function () { if (id !== VO.sayId) return; VO.speaking = false; resumeRec(); if (done) done(); };
+        u.onend = u.onerror = function () { if (id === VO.sayId && --VO.pend <= 0) settle(); };
         speechSynthesis.speak(u);
       });
     }
-    if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); setTimeout(go, 80); } else go();
+    if (!more && (speechSynthesis.speaking || speechSynthesis.pending)) { speechSynthesis.cancel(); setTimeout(go, 80); } else go();
   }
-  function hush() { VO.sayId++; VO.speaking = false; if (canSpeak()) speechSynthesis.cancel(); resumeRec(); }
+  // Nothing more to say: listening comes back, and whatever was waiting for the speech runs
+  function settle() {
+    if (VO.pend > 0 || VO.streaming) return;
+    VO.speaking = false;
+    var f = VO.after; VO.after = null;
+    resumeRec();
+    if (f) f();
+  }
+  function hush() { VO.sayId++; VO.pend = 0; VO.after = null; VO.speaking = false; if (canSpeak()) speechSynthesis.cancel(); resumeRec(); }
 
   // ----- Listening -----
-  function recLang() { var l = state.voice.lang || navigator.language || ''; return /^en/i.test(l) ? l : 'en-IN'; }
+  function recLang() {
+    if (state.voice.lang === 'hi') return 'hi-IN';
+    if (state.voice.lang === 'ur') return 'ur-PK';
+    var l = navigator.language || '';
+    return /^en/i.test(l) ? l : 'en-IN';
+  }
   function startRec() {
     if (!SR || VO.rec || VO.speaking || !VO.want) { paintVoice(); return; }
     var r, got = false;
@@ -2093,14 +2122,26 @@ button.box{cursor:pointer}
     if (VO.want && !VO.rec && (VO.mode === 'cook' || VO.await)) setTimeout(startRec, 250);
     paintVoice();
   }
+  var WAKE = /^\s*(?:(?:hey|hi|ok|okay)\s+)?(?:family\s+)?(?:kitchen|किचन|کچن)(?=[\s,.!?]|$)[\s,.!?]*/i;
+  // A few Hindi and Urdu commands work even without the AI helper
+  var LOCAL_CMD = [[/^(अगला|आगे|अगला स्टेप|हो गया|आगे बढ़ो|اگلا|آگے|ہو گیا|اگلا قدم)$/, 'next'], [/^(पीछे|पिछला|वापस|پیچھے|پچھلا|واپس)$/, 'back'],
+    [/^(दोबारा|फिर से|फिर से बोलो|دوبارہ|پھر سے)$/, 'repeat'], [/^(रुको|बस|चुप|رکو|بس|چپ)$/, 'stop']];
+  function localCmd(t) {
+    var x = String(t).replace(WAKE, '').replace(/[\s,.!?।۔]+/g, ' ').trim();
+    for (var i = 0; i < LOCAL_CMD.length; i++) if (LOCAL_CMD[i][0].test(x)) return LOCAL_CMD[i][1];
+    return t;
+  }
   function heard(alts) {
     var said = String(alts[0] || '').trim();
     if (!said) return;
     VO.lastYou = said;
     VO.log.push({ who: 'you', t: said });
     if (VO.mode === 'groc') { VO.mode = null; VO.want = false; voiceAdd(said.replace(/^\s*(please\s+)?(add|we need|i need|buy)\s+/i, '').replace(/\s+(to|on) (the |my )?(shopping |grocery )?list[.!]?$/i, '')); return; }
-    for (var i = 0; i < alts.length; i++) if (runIntent(alts[i])) return;
-    // While cooking, chatter in the kitchen is ignored; elsewhere, say so
+    var woke = WAKE.test(said);
+    for (var i = 0; i < alts.length; i++) if (runIntent(localCmd(alts[i]))) return;
+    // Real questions go to the AI helper. While cooking only ones that start with "Kitchen…", so kitchen chatter stays in the kitchen.
+    if (aiOn() && (VO.mode !== 'cook' || woke || VO.await)) { askAI(said.replace(WAKE, '').trim() || said); return; }
+    // Without the AI, chatter while cooking is ignored; elsewhere, say so
     if (VO.mode !== 'cook' || VO.await) reply('Sorry, I didn\'t catch that. Say “help” to hear what I can do.');
     else { VO.last = { you: said, app: '' }; VO.lastYou = ''; paintVoice(); }
   }
@@ -2114,14 +2155,16 @@ button.box{cursor:pointer}
     if (VO.mode === 'cook' ? state.voice.read : true) say(text);
   }
   function paintVoice() {
-    var bar = $('vbar'), l = VO.last, on = !!VO.rec;
+    var bar = $('vbar'), l = VO.last, on = !!VO.rec, ai = VO.thinking || VO.live;
     if (bar) bar.innerHTML = '<span class="vdot' + (on ? ' on' : '') + '"></span><span class="vtx">' +
-      (VO.interim ? '<i>“' + esc(VO.interim) + '…”</i>' : l && (l.you || l.app) ? (l.you ? '<i>“' + esc(l.you) + '”</i> ' : '') + esc(l.app || '') :
+      (VO.interim ? '<i>“' + esc(VO.interim) + '…”</i>' : ai ? '<i>“' + esc(VO.aiQ) + '”</i> ' + (VO.thinking ? '✨ Thinking…' : esc(VO.live)) :
+        l && (l.you || l.app) ? (l.you ? '<i>“' + esc(l.you) + '”</i> ' : '') + esc(l.app || '') :
         on ? 'Listening… say “next”, “repeat” or “timer 5 minutes”' : VO.want ? 'One moment…' : 'Tap 🎙️ to talk') + '</span>';
     var chat = $('vChat');
     if (chat) {
-      chat.innerHTML = VO.log.slice(-10).map(function (m) { return '<div class="vmsg ' + m.who + '">' + esc(m.t) + '</div>'; }).join('') +
-        (VO.interim ? '<div class="vmsg you live">' + esc(VO.interim) + '…</div>' : on ? '<div class="vmsg app live">Listening…</div>' : '');
+      chat.innerHTML = VO.log.slice(-10).map(function (m) { return '<div class="vmsg ' + m.who + (m.ai ? ' ai' : '') + '">' + esc(m.t) + '</div>'; }).join('') +
+        (VO.thinking ? '<div class="vmsg app live">✨ Thinking…</div>' : VO.live ? '<div class="vmsg app ai">' + esc(VO.live) + '</div>' :
+          VO.interim ? '<div class="vmsg you live">' + esc(VO.interim) + '…</div>' : on ? '<div class="vmsg app live">Listening…</div>' : '');
       chat.scrollTop = chat.scrollHeight;
     }
     var mic = $('vMic'); if (mic) mic.classList.toggle('on', on);
@@ -2153,22 +2196,28 @@ button.box{cursor:pointer}
     }
     return false;
   }
-  var HELP = 'While cooking, say: next, back, repeat, skip, or what\'s next. For timers: start the timer, set a timer for 5 minutes, how long is left, or stop. ' +
-    'Any time: what\'s for dinner, which boxes for tonight, what\'s in Monday marinade, add milk to the list, slower, faster, or stop listening.';
+  function helpText() {
+    return 'While cooking, say: next, back, repeat, skip, or what\'s next. For timers: start the timer, set a timer for 5 minutes, how long is left, or stop. ' +
+      'Any time: what\'s for dinner, which boxes for tonight, what\'s in Monday marinade, add milk to the list, slower, faster, or stop listening.' +
+      (aiOn() ? ' And you can ask me anything about cooking. While cooking, start with Kitchen, like: Kitchen, can I use thighs instead?' : '');
+  }
+  // Short questions about the plan; longer ones are real questions for the AI helper when it's on
+  function short(t) { return !aiOn() || t.split(' ').length <= 6; }
   var INTENTS = [
-    [/^(help|what can (i|you) (say|do)|commands|what do i say)$/, function () { reply(HELP); }],
+    [/^(help|what can (i|you) (say|do)|commands|what do i say)$/, function () { reply(helpText()); }],
     [/\b(stop|turn off|switch off) (listening|the mic|the microphone|mic)\b|^(go to sleep|mic off|sleep)$/, function () { reply('Okay, I\'ve stopped listening. Tap 🎙️ when you need me.'); stopRec(); }],
     [/\b(cancel|stop|clear|delete|remove|end) (the |all |my |that |all the )?(timers?|alarms?)\b/, function (m, t) { stopTimers(false, /\ball\b/.test(t)); }],
-    [/^(stop|quiet|be quiet|hush|silence|shut up|enough|pause|ok stop)$/, function () { if (!stopTimers(true)) hush(); }],
+    [/^(stop|quiet|be quiet|hush|silence|shut up|enough|pause|ok stop)$/, function () { if (!stopTimers(true)) { aiStop(); hush(); } }],
     [/\b(thank you|thanks|shukriya|jazak ?allah\w*)\b/, function (m) { reply(/jazak/.test(m[0]) ? 'Wa iyyakum! Happy cooking.' : 'You\'re welcome! Happy cooking.'); }],
     [/^(hi|hello|hey|salaam|salam|as?salamu? ?alaikum|assalam o alaikum|as salamu alaykum)\b/, function (m) {
       reply(/sal/.test(m[0]) ? 'Wa alaikum assalam! Ask me what\'s for dinner, or say start cooking.' : 'Hello! Ask me what\'s for dinner, or say start cooking.');
     }],
-    [/\b(slower|slow down|too fast)\b/, function () { setRate(-0.15); reply('Okay, I\'ll speak a bit slower.'); }],
-    [/\b(faster|speed up|too slow)\b/, function () { setRate(0.15); reply('Okay, a bit faster.'); }],
+    [/^((speak|talk) )?(slower|slow down|too fast)$/, function () { setRate(-0.15); reply('Okay, I\'ll speak a bit slower.'); }],
+    [/^((speak|talk) )?(faster|speed up|too slow)$/, function () { setRate(0.15); reply('Okay, a bit faster.'); }],
     // Timers
     [/(\d+(?:\.\d+)?|½)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b/, function (m, t) {
-      if (!/\b(timer|set|start|remind|alarm|countdown)\b/.test(t) && VO.was !== 'timer' && !/^\d/.test(t)) return false;
+      if (!/\b(timer|remind|alarm|countdown)\b/.test(t) && !/^(set|start)\b/.test(t) && VO.was !== 'timer' && !/^\d/.test(t)) return false;
+      if (aiOn() && (/\band\b/.test(t) || t.split(' ').length > 8)) return false; // "…and go to the next step": the AI can do both
       var n = m[1] === '½' ? 0.5 : +m[1], u = m[2].charAt(0);
       VO.await = null;
       voiceTimer(u === 'h' ? n * 60 : u === 's' ? n / 60 : n);
@@ -2179,7 +2228,7 @@ button.box{cursor:pointer}
       else { VO.await = 'timer'; reply('For how many minutes?'); }
     }],
     [/^\d+(\.\d+)?$/, function (m, t) { if (VO.was !== 'timer') return false; voiceTimer(+t); }],
-    [/\b(how (long|much time)|time left|time is left|timer status|check (the )?timers?)\b/, function () { tellTimers(); }],
+    [/^(how (long|much time)( is)?( left)?( on the timers?)?|(how much )?time (is )?left|timer status|check (the )?timers?)$/, function () { tellTimers(); }],
     // Cooking, step by step
     [/\b(done|finished) cooking\b|^(close|exit|quit|close cook mode|exit cook mode|stop cooking|end cooking)$/, function () {
       if (!cookOpen()) return false;
@@ -2199,20 +2248,23 @@ button.box{cursor:pointer}
     [/^(repeat|again|repeat that|repeat it|say (that|it) again|what was that|pardon|come again|read|read it|read that|read it again|read again|one more time|1 more time|sorry what|what)$/, function () {
       if (!cookOpen()) return false; readStep();
     }],
-    [/\b(how many|steps left|where am i|which step|what step)\b/, function () {
+    [/^(how many steps( are)?( left)?|steps left|where am i|which step( am i on)?|what step( am i on| is this)?)$/, function () {
       if (!cookOpen()) return false;
       var left = cook.list.length - cook.i - 1;
       reply('Step ' + (cook.i + 1) + ' of ' + cook.list.length + '. ' + (left ? left + ' to go.' : 'This is the last one.'));
     }],
-    [/\b(start|let'?s|begin|time to) (cook(ing)?|make dinner)\b|\bcook mode\b|\bhands free\b/, function () { voiceStartCooking(); }],
+    [/^((let'?s )?(start|begin) (cooking|cook mode)|let'?s cook|time to cook|(open |start )?cook mode|hands free)$/, function () { voiceStartCooking(); }],
     // About the plan
     [/\bwhat'?s in (the )?(.+)$/, function (m) { return tellBox(m[2]); }],
-    [/\bboxes\b|\btake out\b/, function () { reply(boxesText()); }],
-    [/\bbreakfast\b/, function (m, t) { tellBreakfast(/\btomorrow\b/.test(t) ? 1 : 0); }],
-    [/\btomorrow\b/, function () { reply(dinnerText(1)); }],
-    [/\b(dinner|tonight|for today|what are we (eating|having)|what'?s cooking|what should (i|we) (cook|make)|menu)\b/, function () { reply(dinnerText(0)); }],
+    [/\bboxes\b|\btake out\b/, function (m, t) { if (!short(t)) return false; reply(boxesText()); }],
+    [/\bbreakfast\b/, function (m, t) { if (!short(t)) return false; tellBreakfast(/\btomorrow\b/.test(t) ? 1 : 0); }],
+    [/\btomorrow\b/, function (m, t) { if (!short(t)) return false; reply(dinnerText(1)); }],
+    [/\b(dinner|tonight|for today|what are we (eating|having)|what'?s cooking|what should (i|we) (cook|make)|menu)\b/, function (m, t) { if (!short(t)) return false; reply(dinnerText(0)); }],
     // The shopping list
-    [/^(?:add|buy|we need|need|i need|we'?re out of|out of|put|get) (.+?)(?: (?:to|on|in|onto) (?:the |my )?(?:shopping |grocery |groceries )?(?:list|basket))?$/, function (m) { return voiceAdd(m[1]); }]
+    [/^(?:add|buy|we need|need|i need|we'?re out of|out of|put|get) (.+?)(?: (?:to|on|in|onto) (?:the |my )?(?:shopping |grocery |groceries )?(?:list|basket))?$/, function (m) {
+      if (/\b(what|how|instead|substitute|replace|can i|should|could|why)\b/.test(m[1])) return false; // a question, not a shopping item
+      return voiceAdd(m[1]);
+    }]
   ];
   function setRate(d) { state.voice.rate = Math.max(0.7, Math.min(1.4, Math.round(((state.voice.rate || 1) + d) * 100) / 100)); save(); }
   function durText(min) {
@@ -2293,7 +2345,7 @@ button.box{cursor:pointer}
     if (/^(help|a hand|a timer|timer|more time|a break)$/.test(String(text).trim())) return false;
     if (!isPlus() && !PLUS.GROCERIES_FREE) { reply('The shopping list is part of Kitchen Plus.'); return; }
     var items = [];
-    String(text).toLowerCase().split(/\s*(?:,|\band\b|&|\bplus\b)\s*/).forEach(function (x) {
+    String(text).toLowerCase().split(/\s*(?:,|،|\band\b|&|\bplus\b|\sऔर\s|\sاور\s)\s*/).forEach(function (x) {
       x = x.replace(/[.!?]+$/, '').replace(/^(some|a|an|the|more)\s+/, '').trim();
       if (x.length < 2) return;
       // "milk eggs bread" is three things; "green chillies" and "chicken thighs" stay together
@@ -2305,12 +2357,204 @@ button.box{cursor:pointer}
     items.forEach(function (x) { addGrocery(cap(x)); });
     reply('Added ' + listText(items) + ' to your shopping list.');
   }
+  // ----- The AI helper: questions the phone can't answer go to Claude, through the helper in ai/ -----
+  function aiOn() { return !!AI_URL && state.voice.ai !== false && isPlus(); }
+  function aiBase() { return AI_URL.replace(/\/+$/, ''); }
+  // Swap a key or the free trial for a pass the helper accepts; the pass, never a tester key, stays on the phone
+  function aiUnlock(body, cb) {
+    fetch(aiBase() + '/unlock', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j || {} }; }); })
+      .then(function (x) {
+        if (x.ok && x.j.token) { state.plus.ai = { token: x.j.token, exp: x.j.exp, kind: x.j.kind }; save(); cb(x.j.token); }
+        else cb(null, x.j.error || 'invalid_key');
+      })
+      .catch(function () { cb(null, 'network'); });
+  }
+  function aiToken(cb) {
+    var a = state.plus.ai, p = state.plus;
+    if (a && a.token && a.exp > Date.now() + 6e4) { cb(a.token); return; }
+    if (licensed() && p.tester) { cb(null, 'rekey'); return; } // the tester key isn't kept, so ask for it once
+    if (licensed() && p.key) { aiUnlock({ key: p.key, instance: p.inst || '' }, cb); return; }
+    if (trialLeft() > 0) { aiUnlock({ trial: true }, cb); return; }
+    cb(null, 'plus');
+  }
+  function askKeyAgain() {
+    openModal('<h3>✨ Turn on the AI helper</h3><p class="small">Enter your tester key once more on this phone. The key isn\'t saved; the phone keeps a pass that only the AI helper accepts.</p>' +
+      '<div class="gadd" style="margin-top:12px"><input id="aiKey" placeholder="Your tester key" autocomplete="off" autocapitalize="characters" spellcheck="false">' +
+      '<button class="btn" id="aiKeyGo" style="width:auto;padding:0 14px;font-size:15px">Turn on</button></div>');
+    $('aiKeyGo').addEventListener('click', function () {
+      var b = $('aiKeyGo'); b.disabled = true;
+      aiUnlock({ key: $('aiKey').value }, function (tok, why) {
+        b.disabled = false;
+        if (!tok) { toast(why === 'testing_over' ? 'Testing has finished. Thank you for helping!' : why === 'network' ? 'Couldn\'t reach the AI helper. Check your internet.' : 'That key didn\'t work. Check it and try again.'); return; }
+        closeModal(); toast('The AI helper is on ✓');
+        if (VO.pendingQ) { var q = VO.pendingQ; VO.pendingQ = ''; askAI(q); }
+      });
+    });
+  }
+  function aiStop() {
+    if (VO.aiCtl) { try { VO.aiCtl.abort(); } catch (e) { /* already finished */ } }
+    VO.aiCtl = null; VO.streaming = false; VO.thinking = false; VO.live = '';
+  }
+  function askAI(q) {
+    q = String(q || '').trim().slice(0, 500);
+    if (!q) return;
+    if (!navigator.onLine) { reply('The AI helper needs the internet. Next, back, repeat and timers still work.'); return; }
+    aiStop(); hush();
+    VO.thinking = true; VO.aiQ = q; VO.lastYou = '';
+    paintVoice();
+    aiToken(function (tok, why) {
+      if (tok) { streamAI(q, tok, false); return; }
+      VO.thinking = false; paintVoice();
+      if (why === 'rekey') { VO.pendingQ = q; askKeyAgain(); return; }
+      reply(why === 'testing_over' ? 'Testing has finished. Thank you for helping!' : why === 'network' ? 'I couldn\'t reach the AI helper. Check your internet and try again.' :
+        'The AI helper is part of Kitchen Plus.');
+    });
+  }
+  // The answer streams in: each finished sentence is spoken straight away, and actions run at the end
+  function streamAI(q, tok, retried) {
+    var ctl = window.AbortController ? new AbortController() : null, text = '', said = 0, first = true, acts = [], failed = '';
+    VO.aiCtl = ctl; VO.streaming = true; VO.live = '';
+    function speakDone(final) {
+      var rest = text.slice(said), re = /[.!?।۔](?=\s|$)/g, m, cut = -1;
+      while ((m = re.exec(rest))) cut = m.index + 1;
+      if (final) cut = rest.length;
+      if (cut <= 0) return;
+      var chunk = rest.slice(0, cut);
+      said += cut;
+      if (!chunk.trim() || (VO.mode === 'cook' && !state.voice.read)) return;
+      say(chunk, !first); first = false;
+    }
+    function quiet() { VO.sayId++; VO.pend = 0; if (canSpeak()) speechSynthesis.cancel(); text = ''; said = 0; first = true; VO.live = ''; }
+    function onEvent(ev) {
+      if (ev.t === 'text' && typeof ev.d === 'string') { text += ev.d; VO.thinking = false; VO.live = text; paintVoice(); speakDone(false); }
+      else if (ev.t === 'restart') quiet(); // a second model took over mid-answer: start the answer again
+      else if (ev.t === 'tool') acts.push(ev);
+      else if (ev.t === 'refusal') { quiet(); acts = []; text = 'Sorry, I can\'t help with that one.'; }
+      else if (ev.t === 'error') failed = ev.code === 429 || ev.code === 529 ? 'The AI helper is busy right now. Try again in a minute.' : 'Sorry, something went wrong. Try asking again.';
+    }
+    function finish() {
+      if (VO.aiCtl !== ctl) return;
+      VO.aiCtl = null; VO.thinking = false; VO.live = '';
+      if (!text) text = failed || (acts.length ? '' : 'Sorry, I didn\'t get an answer. Try asking again.');
+      speakDone(true);
+      VO.streaming = false;
+      acts.forEach(runAction);
+      var shown = text || 'Done.';
+      VO.log.push({ who: 'app', t: shown, ai: true });
+      VO.last = { you: q, app: shown };
+      VO.hist.push({ role: 'user', text: q }, { role: 'assistant', text: shown + (acts.length ? ' (' + acts.map(actText).join(', ') + ')' : '') });
+      VO.hist = VO.hist.slice(-8);
+      if (VO.mode === 'sheet' && VO.want && !VO.await) VO.await = 'talk'; // keep the conversation going
+      paintVoice();
+      if (!$('vbar') && !$('vChat')) toast(shown, 6000);
+      if (VO.pend <= 0) settle();
+    }
+    fetch(aiBase() + '/ask', {
+      method: 'POST', signal: ctl ? ctl.signal : undefined,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+      body: JSON.stringify({ q: q, lang: state.voice.lang || 'en', history: VO.hist.slice(-8), context: aiContext() })
+    }).then(function (r) {
+      if (VO.aiCtl !== ctl) return;
+      if (r.status === 401 && !retried) {
+        // The pass ran out or was replaced: get a new one and ask again, once
+        state.plus.ai = null; save(); VO.aiCtl = null; VO.streaming = false;
+        aiToken(function (t2, why) {
+          if (t2) { streamAI(q, t2, true); return; }
+          VO.thinking = false; paintVoice();
+          if (why === 'rekey') { VO.pendingQ = q; askKeyAgain(); } else reply('The AI helper is part of Kitchen Plus.');
+        });
+        return;
+      }
+      if (r.status === 429) { failed = 'That\'s all the AI questions for today. Next, repeat and timers still work.'; return finish(); }
+      if (!r.ok || !r.body || !r.body.getReader) { failed = 'Sorry, the AI helper isn\'t working right now.'; return finish(); }
+      var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
+      function pump() {
+        return reader.read().then(function (x) {
+          if (VO.aiCtl !== ctl) return;
+          if (x.done) {
+            if (buf.trim()) try { onEvent(JSON.parse(buf)); } catch (e) { /* half a line */ }
+            return finish();
+          }
+          buf += dec.decode(x.value, { stream: true });
+          var lines = buf.split('\n');
+          buf = lines.pop();
+          lines.forEach(function (ln) { if (ln.trim()) try { onEvent(JSON.parse(ln)); } catch (e) { /* skip a bad line */ } });
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function (e) {
+      if ((e && e.name === 'AbortError') || VO.aiCtl !== ctl) return;
+      failed = 'I couldn\'t reach the AI helper. Check your internet and try again.';
+      finish();
+    });
+  }
+  // What the AI asked the phone to do. Moving between steps waits until the answer has been spoken.
+  function runAction(a) {
+    var i = a.input || {};
+    if (a.name === 'set_timer') {
+      var min = Number(i.minutes);
+      if (min > 0 && min <= 600) addTimer(min, String(i.label || '') || (cookOpen() ? cook.list[cook.i].querySelector('.tx').textContent : 'Timer'));
+    } else if (a.name === 'stop_timers') {
+      timers.splice(0, timers.length); save(); paintTimers();
+    } else if (a.name === 'add_to_shopping_list') {
+      if ((isPlus() || PLUS.GROCERIES_FREE) && Array.isArray(i.items)) i.items.slice(0, 12).forEach(function (x) { if (typeof x === 'string' && x.trim()) addGrocery(cap(x.trim().slice(0, 60))); });
+    } else if (a.name === 'start_cooking') {
+      VO.after = function () { voiceStartCooking(); };
+    } else if (cookOpen()) {
+      if (a.name === 'next_step') cookGo('next', true, true);
+      else if (a.name === 'previous_step') cookGo('prev', true, true);
+      else if (a.name === 'go_to_step') { var s = Number(i.step); if (s >= 1 && s <= cook.list.length) { cook.i = s - 1; paintCook(); } }
+      if (cookOpen()) VO.after = function () { if (cookOpen()) speakStep(); };
+    }
+  }
+  function actText(a) {
+    var i = a.input || {};
+    return a.name === 'set_timer' ? 'set a ' + durText(Number(i.minutes) || 0) + ' timer' : a.name === 'stop_timers' ? 'stopped the timers' :
+      a.name === 'add_to_shopping_list' ? 'added ' + listText((i.items || []).slice(0, 12)) + ' to the shopping list' : a.name === 'start_cooking' ? 'opened cook mode' :
+      a.name === 'next_step' ? 'moved to the next step' : a.name === 'previous_step' ? 'went back a step' : a.name === 'go_to_step' ? 'went to step ' + i.step : a.name;
+  }
+  // What the AI helper knows right now: the day on screen, its steps and boxes, the family and their kitchen
+  function aiContext() {
+    var L = ['Today is ' + DAY_LONG[DAYS[(wdOf(T) + 1) % 7]] + ' ' + fmt(T) + '.'];
+    if ((!view.browsing && cur.ramadan) || view.ramadan) L.push('The meal plan is paused for Ramadan; the family cooks simple meals from the freezer.');
+    else if (view.w) {
+      var n = view.w, W = PLAN.weeks[n - 1], d = view.d, S = instanceStart(n), q = nightPick(n, d, S).q, g = W.glance[d] || {};
+      L.push('On screen: Week ' + n + ', ' + DAY_LONG[d] + (S != null ? ' ' + fmt(S + DAYS.indexOf(d)) : '') + '. ' +
+        (d === 'sat' ? 'Saturday is prep day; dinner tonight is ' + (q ? q.name : strip(g.dinner || '')) : 'Dinner: ' + (q ? q.name + ' (a quick pick with no Saturday prep)' : strip(g.dinner || W.days[d].title))) + '.');
+      var steps = cookOpen() ? cook.list : Array.prototype.slice.call(document.querySelectorAll('#daycard .tk'));
+      if (steps.length) {
+        L.push('Steps:');
+        steps.slice(0, 45).forEach(function (el, k) {
+          L.push((k + 1) + '. ' + (el.classList.contains('done') ? '(done) ' : '') + el.querySelector('.tx').textContent.replace(/\s+/g, ' ').trim().slice(0, 280));
+        });
+      }
+      if (cookOpen()) L.push('Cook mode is open on step ' + (cook.i + 1) + ' of ' + cook.list.length + '.');
+      var bx = q ? [] : boxesOf(n).filter(function (b) { return b.who === DAY_LONG[d]; });
+      if (bx.length) L.push('Boxes for this day: ' + bx.map(function (b) { return b.name + ' (' + WHERE[b.where].toLowerCase() + ')'; }).join(', ') + '.');
+      var note = state.notes[q ? 'q:' + q.id : 'w' + n + ':' + d];
+      if (note) L.push('Their own note on this dish: ' + note.slice(0, 300));
+    }
+    if (state.prefs.done) {
+      var P = prefsFull(), eats = ['c', 'm', 'b', 'f', 'e'].filter(function (k) { return P.meats[k]; }).map(function (k) { return PN[k]; });
+      L.push('The family eats ' + (eats.length ? eats.join(', ') : 'no meat, fish or eggs') + '. Spice: ' + ['', 'mild', 'medium', 'hot'][P.spice] + '.' +
+        (P.avoid.length ? ' They avoid: ' + P.avoid.join(', ') + '.' : '') + (P.time ? ' Weeknight cooking time: about ' + P.time + ' minutes.' : ''));
+    }
+    var miss = missingKit().map(function (k) { return k[2]; });
+    if (miss.length) L.push('Not in their kitchen: ' + miss.join(', ') + '.');
+    if (timers.length) L.push('Timers: ' + timers.map(function (t) { var left = (t.end - Date.now()) / 6e4; return (left > 0 ? durText(left) + ' left' : 'ringing') + ' for ' + shortLabel(t.label); }).join('; ') + '.');
+    var list = state.groceries.filter(function (x) { return !x.done; }).slice(0, 15).map(function (x) { return x.t; });
+    if (list.length) L.push('Shopping list: ' + list.join(', ') + '.');
+    return L.join('\n').slice(0, 7500);
+  }
   // 🎙️ at the top: ask anything, see the conversation
   function openVoiceSheet() {
     if (!voiceOK()) { openPaywall('voice'); return; }
     unlockSpeech(); unlockAudio();
     var chips = ['What\'s for dinner?', 'Which boxes for tonight?', 'What\'s for dinner tomorrow?', 'Set a timer for 10 minutes', 'Add milk to the list', 'Start cooking', 'Help'];
-    openModal('<h3>🎙️ Talk to Family Kitchen</h3><p class="small">' + (SR ? 'Tap the mic and ask, or tap a question.' : 'This browser can\'t listen, but it can answer out loud. Tap a question.') + '</p>' +
+    if (aiOn()) chips.splice(2, 0, 'I\'m out of yogurt. What can I use?', 'How do I know the chicken is cooked?');
+    openModal('<h3>🎙️ Talk to Family Kitchen</h3><p class="small">' + (SR ? (aiOn() ? 'Tap the mic and ask anything about cooking, or tap a question.' : 'Tap the mic and ask, or tap a question.') : 'This browser can\'t listen, but it can answer out loud. Tap a question.') + '</p>' +
       '<div class="vchat" id="vChat"></div>' + (SR ? '<button class="vmic" id="vMic" aria-label="Talk">🎙️</button>' : '') +
       '<div class="vchips">' + chips.map(function (c) { return '<button data-say="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') + '</div>');
     VO.mode = 'sheet'; VO.log = []; VO.await = null; VO.idle = 0;
@@ -2320,13 +2564,13 @@ button.box{cursor:pointer}
         unlockSpeech();
         var t = b.getAttribute('data-say');
         VO.lastYou = t; VO.log.push({ who: 'you', t: t });
-        if (!runIntent(t)) reply('Sorry, I didn\'t catch that.');
+        if (!runIntent(t)) { if (aiOn()) askAI(t); else reply('Sorry, I didn\'t catch that.'); }
       });
     });
     paintVoice();
     if (SR) { VO.want = true; VO.await = 'talk'; startRec(); }
   }
-  function voiceSheetClosed() { if (VO.mode === 'sheet') { VO.mode = null; stopRec(); hush(); } }
+  function voiceSheetClosed() { if (VO.mode === 'sheet') { VO.mode = null; aiStop(); stopRec(); hush(); } }
   // 🎙️ on the shopping list: say what you need
   function listenGroceries() {
     if (!voiceOK()) { openPaywall('voice'); return; }
@@ -2344,6 +2588,7 @@ button.box{cursor:pointer}
       ['Any time', ['what\'s for dinner', 'what\'s for dinner tomorrow', 'which boxes', 'what\'s in Monday marinade', 'what\'s for breakfast']],
       ['Shopping list', ['add milk to the list', 'we need onions and tomatoes']],
       ['Voice', ['slower', 'faster', 'stop', 'stop listening', 'help']]];
+    if (AI_URL) g.unshift(['Ask the AI helper (Kitchen Plus)', ['Kitchen, can I use thighs instead?', 'Kitchen, I\'m out of yogurt', 'Kitchen, the onions are catching, what do I do?', 'Kitchen, set a timer and go to the next step']]);
     return g.map(function (x) { return '<h4>' + x[0] + '</h4><div class="vchips left">' + x[1].map(function (c) { return '<span>“' + esc(c) + '”</span>'; }).join('') + '</div>'; }).join('');
   }
   function renderVoicePanel() {
@@ -2358,14 +2603,26 @@ button.box{cursor:pointer}
       (voices.length > 1 ? '<label>Voice</label><select id="vVoice"><option value="">Automatic</option>' + voices.map(function (x) {
         return '<option value="' + esc(x.name) + '"' + (x.name === v.name ? ' selected' : '') + '>' + esc(x.name) + ' (' + esc(x.lang) + ')</option>';
       }).join('') + '</select>' : '') +
+      (AI_URL ? '<label>AI helper' + (isPlus() ? '' : ' <span class="lock">👑</span>') + '</label><div class="seg" data-vs="ai"><button data-v="1">On</button><button data-v="0">Off</button></div>' +
+        '<p class="small">Ask anything while you cook: “Can I use thighs instead?”, “I\'m out of yogurt”, “Set a timer and go to the next step”. In cook mode, start with “Kitchen…” so it knows you\'re talking to it. ' +
+        'What you ask, with the recipe on screen and your family\'s food answers, is sent to the AI helper (Claude, made by Anthropic) to answer. Family Kitchen doesn\'t keep it.</p>' : '') +
+      (SR || AI_URL ? '<label>Talk in</label><div class="seg" data-vs="lang"><button data-v="en">English</button><button data-v="hi">हिंदी</button><button data-v="ur">اردو</button></div>' + langNote() : '') +
       '<div class="row" style="margin-top:12px">' + (canSpeak() ? '<button class="btn secondary" data-vp="try">▶️ Try it</button>' : '') + '<button class="btn secondary" data-vp="help">What can I say?</button></div>';
-    var on = { read: v.asked ? (v.read ? '1' : '0') : '1', listen: v.asked ? (v.listen ? '1' : '0') : '1', rate: String(v.rate || 1) };
+    var on = { read: v.asked ? (v.read ? '1' : '0') : '1', listen: v.asked ? (v.listen ? '1' : '0') : '1', rate: String(v.rate || 1), ai: v.ai === false ? '0' : '1', lang: v.lang || 'en' };
     each(box.querySelectorAll('[data-vs]'), function (s) {
       var k = s.getAttribute('data-vs');
       each(s.querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-v') === on[k]); });
     });
     var sel = $('vVoice');
     if (sel) sel.addEventListener('change', function () { state.voice.name = sel.value; save(); unlockSpeech(); say('Hello! This is how I sound.'); });
+  }
+  function langNote() {
+    var l = state.voice.lang;
+    if (l !== 'hi' && l !== 'ur') return '';
+    var name = l === 'hi' ? 'Hindi' : 'Urdu', sample = l === 'hi' ? 'नमस्ते' : 'سلام';
+    return '<p class="small">' + (aiOn() ? 'Talk in ' + name + ' and the AI helper answers in ' + name + '. Recipe steps are still read in English.' :
+      name + ' needs the AI helper' + (AI_URL ? ' (Kitchen Plus)' : '') + '. Without it, only next, back, repeat and stop work in ' + name + '.') +
+      (canSpeak() && !pickVoice(sample) ? ' This phone has no ' + name + ' voice, so answers appear on screen.' : '') + '</p>';
   }
   $('voicePanel').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -2374,7 +2631,10 @@ button.box{cursor:pointer}
     var s = b.closest('[data-vs]');
     if (s) {
       var k = s.getAttribute('data-vs'), val = b.getAttribute('data-v');
-      if (k === 'rate') state.voice.rate = +val; else { state.voice[k] = val === '1'; state.voice.asked = true; }
+      if (k === 'rate') state.voice.rate = +val;
+      else if (k === 'lang') state.voice.lang = val;
+      else if (k === 'ai') { if (val === '1' && !isPlus()) { openPaywall('voice'); return; } state.voice.ai = val === '1'; }
+      else { state.voice[k] = val === '1'; state.voice.asked = true; }
       save(); renderVoicePanel();
       if (k === 'rate') say('This is my new speed.');
       return;

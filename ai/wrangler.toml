@@ -1,0 +1,33 @@
+# The AI helper for Family Kitchen's voice. Setup steps: AI_SETUP.md in the repository.
+name = "family-kitchen-ai"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Only the app's own address may call the helper (add http://localhost:8765 to test on a computer)
+ALLOWED_ORIGINS = "https://sehreen22khan.github.io"
+# Claude model and how hard it thinks. claude-haiku-5-5 is much cheaper and faster; claude-opus-5-5 answers best.
+MODEL = "claude-opus-5-5"
+EFFORT = "low"
+# Questions per person per day (each costs about 1.3 cents on Opus, a few hundredths of a cent on Haiku)
+DAILY_LIMIT = "25"
+# Let people on the 7-day free trial use the AI helper too ("on" or "off"), and how much
+TRIAL_AI = "on"
+TRIAL_DAILY_LIMIT = "10"
+# Your Lemon Squeezy store ID, so licence keys from other stores don't work
+STORE_ID = ""
+# Tester key fingerprints, separated by commas: the same ones as TESTER_KEYS in index.html
+TESTER_KEYS = "aa08246a0eb79fe5a8eb0e09545a147c7db77b6a1117185f6b53db1a52c40302"
+# Last day tester keys work, like "2027-03-31" ("" means no end date)
+TESTER_UNTIL = ""
+
+# Secrets are never written here. Set them once with:
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put TOKEN_SECRET
+
+# Optional: share the daily limits across all of Cloudflare's locations.
+# Create it with "npx wrangler kv namespace create USAGE", then paste its id below and remove the #s.
+# [[kv_namespaces]]
+# binding = "USAGE"
+# id = "paste-the-id-here"
